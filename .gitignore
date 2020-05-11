@@ -1,0 +1,7 @@
+node_modules
+build
+test.js
+coverage
+npm-debug.log
+.idea
+*.iml
