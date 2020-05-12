@@ -4,9 +4,9 @@ import * as Router from "koa-router";
 import * as bodyparser from "koa-bodyparser";
 import * as mongoose from "mongoose";
 import * as dotenv from "dotenv";
+import routes from './routes'
 
 const app = new Koa();
-const router = new Router();
 
 dotenv.config();
 
@@ -14,13 +14,9 @@ dotenv.config();
 app.use(bodyparser());
 
 /** Routes */
-app.use(router.routes()).use(router.allowedMethods());
+app.use(routes());
 
-router.get("/", async (ctx: Koa.Context, next: () => Promise<any>) => {
-  ctx.body = { message: "This is the default route" };
 
-  await next();
-});
 
 
 /** Database */
