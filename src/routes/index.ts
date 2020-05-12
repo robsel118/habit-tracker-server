@@ -1,7 +1,6 @@
-import * as Koa from "koa";
 import * as Router from "koa-router";
 import * as compose from "koa-compose";
-import * as importDir from "import-dir";
+import importDir from "import-dir";
 
 
 export default function routes() {

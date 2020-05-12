@@ -1,5 +1,4 @@
 import * as Koa from "koa";
-import * as Router from "koa-router";
 
 import * as bodyparser from "koa-bodyparser";
 import * as mongoose from "mongoose";
@@ -29,7 +28,7 @@ mongoose.connection.on("connected", () => {
   console.log("connected to MongoDB database");
 });
 
-mongoose.connection.on("error", (err) => {
+mongoose.connection.on("error", () => {
   console.log("an error occured when connecting to to the database");
 });
 
