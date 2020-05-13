@@ -1,12 +1,12 @@
 import * as mongoose from "mongoose";
-import * as bcrypt from 'bcrypt';
-import * as Joi from 'joi';
+import * as bcrypt from "bcrypt";
+import * as Joi from "joi";
 
 export interface IUser extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
-  setHash: (string)=> void
+  setHash: (string) => void;
 }
 
 export const UserSchema = new mongoose.Schema(
@@ -35,10 +35,10 @@ export const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.methods.setHash = function (password: String) {
-  var user = this;
+  var self = this;
 
-  bcrypt.hash(password, 10, function (err, hash) {
-    user.hash = hash;
+  return bcrypt.hash(password, 10).then((hash) => {
+    self.hash = hash;
   });
 };
 
