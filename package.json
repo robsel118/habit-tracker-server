@@ -10,6 +10,11 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "husky": {
+    "hooks": {
+      "pre-commit": "yarn eslint . --ext .js,.jsx,.ts,.tsx"
+    }
+  },
   "dependencies": {
     "bcrypt": "^4.0.1",
     "dotenv": "^8.2.0",
@@ -32,6 +37,7 @@
     "@typescript-eslint/eslint-plugin": "2.31.0",
     "@typescript-eslint/parser": "2.31.0",
     "eslint": "^7.0.0",
+    "husky": "^4.2.5",
     "typescript": "^3.8.3"
   }
 }

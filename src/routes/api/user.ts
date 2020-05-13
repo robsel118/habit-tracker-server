@@ -1,7 +1,7 @@
 import * as Koa from 'koa';
 import * as Router from "koa-router";
 
-async function getHabits(ctx: Koa.Context, next: () => Promise<any>){
+async function getHabits(ctx: Koa.Context, next){
     ctx.body = "this should return the user info"
 }
 

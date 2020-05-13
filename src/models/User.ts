@@ -2,10 +2,11 @@ import * as mongoose from "mongoose";
 import * as bcrypt from "bcrypt";
 import * as Joi from "joi";
 
-export interface UserDoc extends mongoose.Document {
+export interface TypeUser extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
+  setHash: (string) => void;
 }
 
 export const UserSchema = new mongoose.Schema(
@@ -33,15 +34,15 @@ export const UserSchema = new mongoose.Schema(
   }
 );
 
-UserSchema.methods.setHash = function (password: string):void {
+UserSchema.methods.setHash = function (password: string) {
 
   bcrypt.hash(password, 10, function (err, hash) {
     this.hash = hash;
   });
 };
 
-UserSchema.methods.validatePayload = function (obj: Record<string, any>): void {
-  let schema = Joi.object({
+UserSchema.methods.validatePayload = function (obj: Record<string, string>) {
+  const schema = Joi.object({
     name: Joi.string().min(4).required(),
     email: Joi.string().email().required,
     password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,30}$")).required,
@@ -49,5 +50,5 @@ UserSchema.methods.validatePayload = function (obj: Record<string, any>): void {
 
   return schema.validate(obj);
 };
-const User = mongoose.model<UserDoc>("User", UserSchema);
+const User = mongoose.model<TypeUser>("User", UserSchema);
 export default User;
