@@ -6,7 +6,7 @@ export interface TypeUser extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
-  setHash: (string) => void;
+  setHash?: (string) => void;
 }
 
 export const UserSchema = new mongoose.Schema(
@@ -35,7 +35,6 @@ export const UserSchema = new mongoose.Schema(
 );
 
 UserSchema.methods.setHash = function (password: string) {
-
   bcrypt.hash(password, 10, function (err, hash) {
     this.hash = hash;
   });
