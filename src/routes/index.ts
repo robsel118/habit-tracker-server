@@ -1,7 +1,6 @@
 import * as Router from "koa-router";
 import * as compose from "koa-compose";
-import importDir from "import-dir";
-
+import * as importDir from "import-dir";
 
 export default function routes() {
   const Routes = importDir(`./api`);

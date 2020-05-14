@@ -1,11 +1,11 @@
-import jwt from "jsonwebtoken";
-import passport from "koa-passport";
-import User from "../models/User";
+import * as jwt from "jsonwebtoken";
+import * as passport from "koa-passport";
 
 import * as compose from "koa-compose";
 
 import jwtStrategy from "./strategies/jwt";
 import emailStrategy from "./strategies/email";
+import User from "../models/User";
 
 passport.use("jwt", jwtStrategy);
 passport.use("email", emailStrategy);

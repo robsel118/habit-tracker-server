@@ -1,17 +1,35 @@
-import * as Koa from 'koa';
+import * as Koa from "koa";
 import * as Router from "koa-router";
+import User from "../../models/User";
+import { authEmail, generateToken } from "../../auth";
 
+async function registerUser(ctx: Koa.Context, next) {
+  const { name, email, password } = ctx.body;
 
-async function signUpUser(ctx: Koa.Context, next){
-    ctx.body = "this path is used to sign up a new user"
+  let user = await User.findOne({ email });
+  if (name && email && password) {
+    if (!user) {
+      user = new User({ name, email });
+      user.setHash(password);
+
+      await user.save();
+
+      ctx.passport = {
+        user: user._id,
+      };
+
+      await next();
+    } else {
+      ctx.status = 400;
+      ctx.body = { status: "error", message: "E-mail already registered" };
+    }
+  } else {
+    ctx.status = 400;
+    ctx.body = { status: "error", message: "Invalid email or password" };
+  }
 }
-
-async function signInUser(ctx: Koa.Context, next){
-    ctx.body = "this path is used to sign in a registered user"
-}
-
 
 export default (router: Router) => {
-    router.get('/auth/register', signUpUser);
-    router.get('/auth', signInUser)
-}
+  router.get("/auth/register", registerUser, generateToken);
+  router.get("/auth", authEmail, generateToken);
+};

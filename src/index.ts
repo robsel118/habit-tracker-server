@@ -3,8 +3,7 @@ import * as Koa from "koa";
 import * as bodyparser from "koa-bodyparser";
 import * as mongoose from "mongoose";
 import * as dotenv from "dotenv";
-import routes from './routes'
-
+import routes from "./routes";
 const app = new Koa();
 
 dotenv.config();
@@ -15,11 +14,8 @@ app.use(bodyparser());
 /** Routes */
 app.use(routes());
 
-
-
-
 /** Database */
-mongoose.connect(process.env.MONGO_URI,  {
+mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });

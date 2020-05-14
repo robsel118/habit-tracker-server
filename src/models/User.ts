@@ -6,7 +6,8 @@ export interface TypeUser extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
-  setHash?: (string) => Promise<string>;
+  setHash: (password: string) => string;
+  validatePayload: (obj: Record<string, string>) => boolean;
 }
 
 export const UserSchema = new mongoose.Schema(
@@ -41,12 +42,14 @@ UserSchema.methods.setHash = function (password: string) {
 
 UserSchema.methods.validatePayload = function (obj: Record<string, string>) {
   const schema = Joi.object({
-    name: Joi.string().min(4).required(),
-    email: Joi.string().email().required,
-    password: Joi.string().pattern(new RegExp("^[a-zA-Z0-9]{6,30}$")).required,
+    name: Joi.string().alphanum().min(4).max(30).required(),
+    email: Joi.string().email().required(),
+    password: Joi.string().regex(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
   });
 
-  return schema.validate(obj);
+  const { error } = schema.validate(obj);
+
+  return error == null ? true : false;
 };
 const User = mongoose.model<TypeUser>("User", UserSchema);
 export default User;

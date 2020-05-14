@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "dev": "nodemon --watch 'src/**/*' -e ts,tsx --exec ts-node ./src/",
+    "dev": "nodemon --watch 'src/*' -e ts,tsx --exec ts-node ./src/",
     "start": "tsc && node ./build/index.js",
-    "test": "jest"
+    "test": "jest ./src"
   },
   "keywords": [],
   "author": "",
@@ -17,9 +17,10 @@
     }
   },
   "dependencies": {
+    "@types/passport": "1.0.3",
     "bcrypt": "^4.0.1",
     "dotenv": "^8.2.0",
-    "import-dir": "^0.0.1",
+    "import-dir": "0.0.1",
     "joi": "^14.3.1",
     "jsonwebtoken": "^8.5.1",
     "koa": "^2.11.0",
@@ -42,7 +43,6 @@
     "@types/koa": "^2.11.3",
     "@types/koa-bodyparser": "^4.3.0",
     "@types/koa-router": "^7.4.0",
-    "@types/mocha": "^7.0.2",
     "@types/mongoose": "^5.7.16",
     "@typescript-eslint/eslint-plugin": "2.31.0",
     "@typescript-eslint/parser": "2.31.0",
@@ -52,6 +52,7 @@
     "husky": "^4.2.5",
     "jest": "26.0.1",
     "nodemon": "2.0.3",
+    "ts-node": "8.10.1",
     "typescript": "^3.8.3"
   }
 }
