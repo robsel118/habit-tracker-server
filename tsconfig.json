@@ -1,12 +1,14 @@
 {
-    "compilerOptions": {
-      "outDir": "./build",
-      "lib": [ "es5", "es6" ],
-      "module": "commonjs",
-      "target": "es6",
-      "sourceMap": true
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "*": ["src/*"]
     },
-    "exclude": [
-      "node_modules"
-    ]
-  }
+    "outDir": "./build",
+    "lib": ["es5", "es6"],
+    "module": "commonjs",
+    "target": "es6",
+    "sourceMap": true
+  },
+  "exclude": ["node_modules"]
+}
