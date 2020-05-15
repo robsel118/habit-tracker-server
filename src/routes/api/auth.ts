@@ -1,20 +1,20 @@
-import * as Koa from "koa";
-import * as Router from "koa-router";
-import User from "../../models/User";
+import Koa from "koa";
+import Router from "koa-router";
+import User, { validatePayload } from "../../models/User";
 import { authEmail, generateToken } from "../../auth";
 
 async function registerUser(ctx: Koa.Context, next) {
-  const { name, email, password } = ctx.body;
+  const { name, email, password } = ctx.request.body;
 
   let user = await User.findOne({ email });
-  if (name && email && password) {
+  if (name && email && password && validatePayload(ctx.request.body)) {
     if (!user) {
       user = new User({ name, email });
-      user.setHash(password);
 
+      await user.setHash(password);
       await user.save();
 
-      ctx.passport = {
+      ctx.state = {
         user: user._id,
       };
 
@@ -30,6 +30,6 @@ async function registerUser(ctx: Koa.Context, next) {
 }
 
 export default (router: Router) => {
-  router.get("/auth/register", registerUser, generateToken);
-  router.get("/auth", authEmail, generateToken);
+  router.post("/auth/register", registerUser, generateToken());
+  router.post("/auth", authEmail(), generateToken());
 };

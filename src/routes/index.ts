@@ -1,14 +1,13 @@
-import * as Router from "koa-router";
-import * as compose from "koa-compose";
-import * as importDir from "import-dir";
+import Router from "koa-router";
 
-export default function routes() {
-  const Routes = importDir(`./api`);
-  const router = new Router({
-    prefix: "/api",
-  });
+import userRoute from "./api/user";
+import authRoute from "./api/auth";
 
-  Object.keys(Routes).map((name) => Routes[name](router));
+const router = new Router({
+  prefix: "/api",
+});
 
-  return compose([router.routes(), router.allowedMethods()]);
-}
+userRoute(router);
+authRoute(router);
+
+export default router;

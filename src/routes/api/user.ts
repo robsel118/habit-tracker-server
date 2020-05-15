@@ -1,10 +1,12 @@
-import * as Koa from 'koa';
-import * as Router from "koa-router";
-
-async function getHabits(ctx: Koa.Context, next){
-    ctx.body = "this should return the user info"
-}
+import Koa from "koa";
+import Router from "koa-router";
+import { isAuthenticated } from "../../auth";
+import User from "../../models/User";
 
 export default (router: Router) => {
-    router.get('user/me', getHabits);
-}
+  router.get("/user/me", isAuthenticated(), async (ctx: Koa.Context) => {
+    const user = await User.findById(ctx.state.user);
+
+    if (user) ctx.body = { response: user };
+  });
+};

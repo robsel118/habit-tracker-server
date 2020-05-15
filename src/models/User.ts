@@ -1,13 +1,12 @@
-import * as mongoose from "mongoose";
-import * as bcrypt from "bcrypt";
-import * as Joi from "joi";
+import mongoose from "mongoose";
+import bcrypt from "bcrypt";
+import Joi from "joi";
 
 export interface TypeUser extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
   setHash: (password: string) => string;
-  validatePayload: (obj: Record<string, string>) => boolean;
 }
 
 export const UserSchema = new mongoose.Schema(
@@ -40,7 +39,7 @@ UserSchema.methods.setHash = function (password: string) {
   return bcrypt.hash(password, 10).then((hash) => (self.hash = hash));
 };
 
-UserSchema.methods.validatePayload = function (obj: Record<string, string>) {
+export function validatePayload(obj: Record<string, string>) {
   const schema = Joi.object({
     name: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),
@@ -50,6 +49,7 @@ UserSchema.methods.validatePayload = function (obj: Record<string, string>) {
   const { error } = schema.validate(obj);
 
   return error == null ? true : false;
-};
+}
+
 const User = mongoose.model<TypeUser>("User", UserSchema);
 export default User;

@@ -1,4 +1,25 @@
-import User from "models/User";
+import User, { validatePayload } from "models/User";
+import app from "./app";
+import request from "supertest";
+import connectDatabase from "./db";
+import mongoose from "mongoose";
+
+let server, agent;
+
+beforeAll(async (done) => {
+  await connectDatabase(process.env.MONGO_URI);
+
+  server = app.listen(4000, () => {
+    agent = request.agent(server);
+    done();
+  });
+});
+
+afterAll((done) => {
+  mongoose.disconnect();
+  mongoose.connection.close();
+  return server && server.close(done);
+});
 
 describe("User model", () => {
   it("creates a new user and sets the hash", async () => {
@@ -14,9 +35,64 @@ describe("User model", () => {
     user.email = payload.email;
     await user.setHash("password");
 
-    expect(user.validatePayload(payload));
+    expect(validatePayload(payload));
     expect(user.hash).not.toBeUndefined();
     expect(user.name).toBe(payload.name);
     expect(user.email).toBe(payload.email);
+  });
+});
+
+describe("Endpoint Access", () => {
+  it("should fail to authenticate user", async () => {
+    const response = await agent.get("/api/user/me");
+
+    expect(response.status).toBe(401);
+  });
+});
+
+describe("Auth API", () => {
+  it("should not register with invalide email", async () => {
+    const response = await agent
+      .post("/api/auth/register")
+      .send({ name: "robert", email: "robert", password: "123456" });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("Invalid email or password");
+  });
+
+  let userId;
+
+  it("should register a user", async () => {
+    const response = await agent.post("/api/auth/register").send({
+      name: "robert",
+      email: "mock-up@outlook.com",
+      password: "123456",
+    });
+
+    expect(response.body.token).toBeDefined();
+    expect(response.status).toBe(200);
+    userId = response.body.user._id;
+  });
+
+  it("should not register an existing user", async () => {
+    const response = await agent.post("/api/auth/register").send({
+      name: "robert",
+      email: "mock-up@outlook.com",
+      password: "123456",
+    });
+
+    expect(response.status).toBe(400);
+    expect(response.body.message).toBe("E-mail already registered");
+  });
+  it("should login the user", async () => {
+    const response = await agent.post("/api/auth").send({
+      email: "mock-up@outlook.com",
+      password: "123456",
+    });
+
+    expect(response.status).toBe(200);
+    expect(response.body.token).toBeDefined();
+
+    await User.findByIdAndDelete({ _id: userId });
   });
 });

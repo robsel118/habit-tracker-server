@@ -1,32 +1,10 @@
-import * as Koa from "koa";
-
-import * as bodyparser from "koa-bodyparser";
-import * as mongoose from "mongoose";
-import * as dotenv from "dotenv";
-import routes from "./routes";
-const app = new Koa();
+import app from "./app";
+import dotenv from "dotenv";
+import connectDatabase from "./db";
 
 dotenv.config();
 
-/** Middlewares */
-app.use(bodyparser());
-
-/** Routes */
-app.use(routes());
-
-/** Database */
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
-
-mongoose.connection.on("connected", () => {
-  console.log("connected to MongoDB database");
-});
-
-mongoose.connection.on("error", () => {
-  console.log("an error occured when connecting to to the database");
-});
+connectDatabase(process.env.MONGO_URI);
 
 app.listen(process.env.PORT, () =>
   console.log(`server started on port ${process.env.PORT}`)
