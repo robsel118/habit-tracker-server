@@ -17,7 +17,6 @@
     }
   },
   "dependencies": {
-    "@types/passport": "1.0.3",
     "bcrypt": "^4.0.1",
     "dotenv": "^8.2.0",
     "import-dir": "0.0.1",
@@ -35,6 +34,7 @@
     "passport-local": "^1.0.0"
   },
   "devDependencies": {
+    "@types/passport": "1.0.3",
     "@babel/core": "7.9.6",
     "@babel/preset-env": "7.9.6",
     "@babel/preset-typescript": "7.9.0",
