@@ -1,13 +1,11 @@
+import Koa from "koa";
 import jwt from "jsonwebtoken";
 import passport from "koa-passport";
 import compose from "koa-compose";
-import dotenv from "dotenv";
-import Koa from "koa";
+
 import jwtStrategy from "./strategies/jwt";
 import emailStrategy from "./strategies/email";
 import User from "../models/User";
-
-dotenv.config();
 
 passport.use("jwt", jwtStrategy);
 passport.use("email", emailStrategy);
@@ -32,7 +30,7 @@ export default function auth() {
 }
 
 export function isAuthenticated() {
-  return passport.authenticate("jwt", { session: false });
+  return passport.authenticate("jwt");
 }
 
 export function authEmail() {
@@ -47,9 +45,11 @@ export function generateToken() {
       ctx.status = 401;
     } else {
       const jwtToken = jwt.sign({ id: user }, process.env.PASSPORT_SECRET, {
-        expiresIn: 60 * 60 * 24 * 7 * 52,
+        expiresIn: 60 * 60 * 24 * 365,
       });
-      const token = `JWT ${jwtToken}`;
+
+      // passport-jwt extracts a bearer token instead of JWT token
+      const token = `bearer ${jwtToken}`;
 
       const currentUser = await User.findOne({ _id: user }).select(
         "name email"

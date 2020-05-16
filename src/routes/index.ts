@@ -1,13 +1,14 @@
 import Router from "koa-router";
+import compose from "koa-compose";
 
-import userRoute from "./api/user";
-import authRoute from "./api/auth";
+import authServices from "./api/auth";
+import userServices from "./api/user";
 
 const router = new Router({
   prefix: "/api",
 });
 
-userRoute(router);
-authRoute(router);
+authServices(router);
+userServices(router);
 
-export default router;
+export default () => compose([router.routes(), router.allowedMethods()]);

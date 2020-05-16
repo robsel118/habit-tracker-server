@@ -18,6 +18,7 @@ export const UserSchema = new mongoose.Schema(
     email: {
       type: String,
       required: true,
+      unique: true,
       trim: true,
     },
     hash: {
@@ -34,12 +35,14 @@ export const UserSchema = new mongoose.Schema(
   }
 );
 
-UserSchema.methods.setHash = function (password: string) {
+UserSchema.methods.setHash = async function (password: string) {
   const self = this;
   return bcrypt.hash(password, 10).then((hash) => (self.hash = hash));
 };
 
-export function validatePayload(obj: Record<string, string>) {
+export function validateNewUserInfo(obj: Record<string, string>) {
+  // validates the user model
+  // TODO define password complexity
   const schema = Joi.object({
     name: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),

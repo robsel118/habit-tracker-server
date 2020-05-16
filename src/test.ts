@@ -1,4 +1,4 @@
-import User, { validatePayload } from "models/User";
+import User, { validateNewUserInfo } from "models/User";
 import app from "./app";
 import request from "supertest";
 import connectDatabase from "./db";
@@ -35,7 +35,7 @@ describe("User model", () => {
     user.email = payload.email;
     await user.setHash("password");
 
-    expect(validatePayload(payload));
+    expect(validateNewUserInfo(payload));
     expect(user.hash).not.toBeUndefined();
     expect(user.name).toBe(payload.name);
     expect(user.email).toBe(payload.email);

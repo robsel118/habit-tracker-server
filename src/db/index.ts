@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
 
-export default (uri) =>
+export default (uri: string) =>
   new Promise((resolve, reject) => {
     mongoose.connection
       .on("connected", () => {
@@ -15,5 +15,6 @@ export default (uri) =>
     mongoose.connect(uri, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      useCreateIndex: true,
     });
   });

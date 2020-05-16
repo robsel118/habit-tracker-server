@@ -1,8 +1,9 @@
-import { Strategy as CustomStrategy } from "passport-custom";
-import User from "../../models/User";
+import { Strategy as CustomStrategy, VerifiedCallback } from "passport-custom";
 import bcrypt from "bcrypt";
 
-export default new CustomStrategy(async (ctx, done) => {
+import User from "../../models/User";
+
+export default new CustomStrategy(async (ctx, done: VerifiedCallback) => {
   try {
     if (ctx.body.email && ctx.body.password) {
       const { email, password } = ctx.body;

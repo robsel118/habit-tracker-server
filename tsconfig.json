@@ -1,8 +1,9 @@
 {
+  "compileOnSave": false,
   "compilerOptions": {
-    "baseUrl": ".",
+    "baseUrl": "./src",
     "paths": {
-      "*": ["*", "src/*"]
+      "models/*": ["models/*"]
     },
     "outDir": "./build",
     "lib": ["es5", "es6"],
@@ -12,5 +13,12 @@
     "esModuleInterop": true
   },
   "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  "exclude": [
+    "node_modules",
+    "**/*.spec.ts",
+    "build",
+    "jest.config.js",
+    "babel.config.js",
+    ".eslintrc.js"
+  ]
 }
