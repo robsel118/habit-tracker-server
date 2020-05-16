@@ -41,7 +41,6 @@ UserSchema.methods.setHash = async function (password: string) {
 };
 
 export function validateNewUserInfo(obj: Record<string, string>) {
-  // validates the user model
   // TODO define password complexity
   const schema = Joi.object({
     name: Joi.string().alphanum().min(4).max(30).required(),

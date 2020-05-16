@@ -5,10 +5,11 @@ import {
 } from "passport-jwt";
 
 import User from "../../models/User";
+import { config } from "../config";
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-  secretOrKey: process.env.PASSPORT_SECRET,
+  secretOrKey: config.secret,
 };
 
 export default new JWTStrategy(

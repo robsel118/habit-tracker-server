@@ -1,8 +1,9 @@
 import app from "./app";
 import connectDatabase from "./db";
 
-connectDatabase(process.env.MONGO_URI);
+const DB_URI = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/habit_db";
+const PORT = process.env.PORT || 3000;
 
-app.listen(process.env.PORT, () =>
-  console.log(`server started on port ${process.env.PORT}`)
-);
+connectDatabase(DB_URI);
+
+app.listen(PORT, () => console.log(`server started on port ${PORT}`));

@@ -6,6 +6,7 @@ import compose from "koa-compose";
 import jwtStrategy from "./strategies/jwt";
 import emailStrategy from "./strategies/email";
 import User from "../models/User";
+import { config } from "./config";
 
 passport.use("jwt", jwtStrategy);
 passport.use("email", emailStrategy);
@@ -44,7 +45,7 @@ export function generateToken() {
     if (user === false) {
       ctx.status = 401;
     } else {
-      const jwtToken = jwt.sign({ id: user }, process.env.PASSPORT_SECRET, {
+      const jwtToken = jwt.sign({ id: user }, config.secret, {
         expiresIn: 60 * 60 * 24 * 365,
       });
 
