@@ -11,7 +11,12 @@ jobs:
           steps:
             - run: npm install
             - run: npm test
+    environment:
+      PORT: 3000
+      MONGO_URI: "mongodb://127.0.0.1:27017/habit_db"
+      NODE_ENV: "dev"
+      PASSPORT_SECRET: "secret"
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-and-test:
+    jobs:
+      - build-and-test
