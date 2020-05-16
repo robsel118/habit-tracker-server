@@ -1,5 +1,6 @@
 version: 2.1
-
+orbs:
+  node: circleci/node@1.1.6
 machine:
   services:
     - mongodb
@@ -7,7 +8,6 @@ jobs:
   build-and-test:
     working_directory: ~/habit-tracker-backend
     docker:
-      - image: circleci/node:12
       - image: circleci/mongo:latest
     steps:
       - checkout
