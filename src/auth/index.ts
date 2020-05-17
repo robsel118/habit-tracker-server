@@ -53,7 +53,7 @@ export function generateToken() {
       const token = `bearer ${jwtToken}`;
 
       const currentUser = await User.findOne({ _id: user }).select(
-        "name email"
+        "username email"
       );
 
       ctx.status = 200;

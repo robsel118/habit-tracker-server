@@ -26,18 +26,18 @@ describe("User model", () => {
     const user = new User();
 
     const payload = {
-      name: "robert",
+      username: "robert",
       email: "robert@robert.com",
       password: "password",
     };
 
-    user.name = payload.name;
+    user.username = payload.username;
     user.email = payload.email;
     await user.setHash("password");
 
     expect(validateNewUserInfo(payload));
     expect(user.hash).not.toBeUndefined();
-    expect(user.name).toBe(payload.name);
+    expect(user.username).toBe(payload.username);
     expect(user.email).toBe(payload.email);
   });
 });
@@ -54,7 +54,7 @@ describe("Auth API", () => {
   it("should not register with invalide email", async () => {
     const response = await agent
       .post("/api/auth/register")
-      .send({ name: "robert", email: "robert", password: "123456" });
+      .send({ username: "robert", email: "robert", password: "123456" });
 
     expect(response.status).toBe(400);
     expect(response.body.message).toBe("Invalid email or password");
@@ -64,7 +64,7 @@ describe("Auth API", () => {
 
   it("should register a user", async () => {
     const response = await agent.post("/api/auth/register").send({
-      name: "robert",
+      username: "robert",
       email: "mock-up@outlook.com",
       password: "123456",
     });
@@ -76,7 +76,7 @@ describe("Auth API", () => {
 
   it("should not register an existing user", async () => {
     const response = await agent.post("/api/auth/register").send({
-      name: "robert",
+      username: "robert",
       email: "mock-up@outlook.com",
       password: "123456",
     });
