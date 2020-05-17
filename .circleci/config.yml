@@ -1,17 +1,28 @@
 version: 2.1
-orbs:
-  node: circleci/node@1.1.6
+
 jobs:
   build-and-test:
-    executor:
-      name: node/default
+    working_directory: ~/habit-tracker-backend
+    docker:
+      - image: circleci/node:12
+      - image: circleci/mongo:latest
     steps:
       - checkout
-      - node/with-cache:
-          steps:
-            - run: npm install
-            - run: npm test
+      - run:
+          name: Update npm
+          command: "sudo npm install -g npm@latest"
+      - run:
+          name: Install npm
+          command: npm install
+      - run:
+          name: Test
+          command: npm test
+    environment:
+      PORT: 3000
+      MONGO_URI: "mongodb://127.0.0.1:27017/habit_db"
+      NODE_ENV: "dev"
+      PASSPORT_SECRET: "secret"
 workflows:
-    build-and-test:
-      jobs:
-        - build-and-test
+  build-and-test:
+    jobs:
+      - build-and-test
