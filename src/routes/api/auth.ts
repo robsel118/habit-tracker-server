@@ -5,14 +5,14 @@ import User, { validateNewUserInfo } from "../../models/User";
 import { authEmail, generateToken } from "../../auth";
 
 async function registerUser(ctx: Koa.Context, next: Koa.Next) {
-  const { name, email, password } = ctx.request.body;
+  const { username, email, password } = ctx.request.body;
 
-  if (name && email && password && validateNewUserInfo(ctx.request.body)) {
+  if (username && email && password && validateNewUserInfo(ctx.request.body)) {
     //Checks it the user already exists
     let user = await User.findOne({ email: email.toLowerCase() });
 
     if (!user) {
-      user = new User({ name, email: email.toLowerCase() });
+      user = new User({ username, email: email.toLowerCase() });
 
       await user.setHash(password);
       await user.save();

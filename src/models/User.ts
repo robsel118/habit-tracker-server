@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import Joi from "joi";
 
 export interface TypeUser extends mongoose.Document {
-  name: string;
+  username: string;
   email: string;
   hash: string;
   setHash: (password: string) => string;
@@ -11,7 +11,7 @@ export interface TypeUser extends mongoose.Document {
 
 export const UserSchema = new mongoose.Schema(
   {
-    name: {
+    username: {
       type: String,
       required: true,
     },
@@ -43,7 +43,7 @@ UserSchema.methods.setHash = async function (password: string) {
 export function validateNewUserInfo(obj: Record<string, string>) {
   // TODO define password complexity
   const schema = Joi.object({
-    name: Joi.string().alphanum().min(4).max(30).required(),
+    username: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),
     password: Joi.string().regex(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
   });
