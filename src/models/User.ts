@@ -2,14 +2,16 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Joi from "joi";
 
-export interface TypeUser extends mongoose.Document {
+import Habit from "./Habit";
+
+export interface UserType extends mongoose.Document {
   name: string;
   email: string;
   hash: string;
   setHash: (password: string) => string;
 }
 
-export const UserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     name: {
       type: String,
@@ -25,6 +27,9 @@ export const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    habits: {
+      type: [Habit],
     },
   },
   {
@@ -53,5 +58,5 @@ export function validateNewUserInfo(obj: Record<string, string>) {
   return error == null ? true : false;
 }
 
-const User = mongoose.model<TypeUser>("User", UserSchema);
+const User = mongoose.model<UserType>("User", UserSchema);
 export default User;
