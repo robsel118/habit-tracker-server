@@ -1,4 +1,6 @@
 import User, { validateNewUserInfo } from "models/User";
+import Habit, { validateHabitData, Day } from "models/Habit";
+import Completion from "models/Completion";
 import app from "./app";
 import request from "supertest";
 import connectDatabase from "./db";
@@ -20,6 +22,27 @@ afterAll((done) => {
   mongoose.connection.close();
   return server && server.close(done);
 });
+
+function generateTestUser() {
+  const payload = {
+    username: "robert",
+    email: "robert@robert.com",
+  };
+  const testUser = new User({ ...payload });
+  testUser.username = payload.username;
+  testUser.email = payload.email;
+  return testUser;
+}
+
+function generateTestHabit() {
+  const payload = {
+    name: "Eat Junkt",
+    frequency: [Day.MONDAY],
+    not: true,
+  };
+  const testHabit = new Habit({ ...payload });
+  return testHabit;
+}
 
 describe("User model", () => {
   it("creates a new user and sets the hash", async () => {
@@ -94,5 +117,46 @@ describe("Auth API", () => {
     expect(response.body.token).toBeDefined();
 
     await User.findByIdAndDelete({ _id: userId });
+  });
+});
+// Habits and completion
+describe("Habit and Completion model", () => {
+  it("does not creates a habit", async () => {
+    const payload = {
+      name: "Work Out",
+    };
+
+    expect(validateHabitData(payload)).toBe(false);
+  });
+  it("creates a habit and assign it to the user", async () => {
+    const payload = {
+      name: "Eat Junkt",
+      frequency: [Day.MONDAY],
+      not: true,
+    };
+
+    const testUser = generateTestUser();
+    const habit = new Habit({ ...payload });
+    testUser.habits.push(habit);
+
+    expect(validateHabitData(payload)).toBe(true);
+    expect(habit.currentStreak).toBe(0);
+    expect(habit.name).toBe(payload.name);
+    expect(habit.not);
+    expect(habit.frequency.length).toBe(1);
+    expect(testUser.habits.length).toBe(1);
+    expect(testUser.habits[0]._id).toBe(habit._id);
+  });
+
+  it("adds a completion", async () => {
+    const testUser = generateTestUser();
+    const testHabit = generateTestHabit();
+    testUser.habits.push(testHabit);
+
+    const completion = new Completion({ user: testUser });
+    completion.habits.push(testHabit);
+
+    expect(completion.user._id).toBe(testUser._id);
+    expect(completion.habits[0]._id).toBe(testHabit._id);
   });
 });

@@ -2,12 +2,13 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Joi from "joi";
 
-import Habit from "./Habit";
+import { HabitType } from "./Habit";
 
 export interface UserType extends mongoose.Document {
   username: string;
   email: string;
   hash: string;
+  habits: mongoose.Types.Array<HabitType>;
   setHash: (password: string) => string;
 }
 
@@ -28,9 +29,7 @@ const UserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
-    habits: {
-      type: [Habit],
-    },
+    habits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
   },
   {
     timestamps: {
