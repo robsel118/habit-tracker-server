@@ -61,7 +61,6 @@ export function validateHabitData(obj: Record<string, any>) {
   });
 
   const { error } = schema.validate(obj);
-  //   console.log(error);
   return error == null ? true : false;
 }
 

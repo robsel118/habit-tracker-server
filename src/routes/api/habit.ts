@@ -8,9 +8,11 @@ async function addHabitToUser(ctx: Koa.Context) {
   const user = await User.findById(ctx.state.user);
   if (validateHabitData(ctx.request.body)) {
     const payload = ctx.request.body;
+
     const habit = new Habit({ ...payload });
+
     await habit.save();
-    user.habits.push(habit);
+    user.habits.addToSet(habit);
     await user.save();
 
     ctx.status = 200;
@@ -25,6 +27,5 @@ async function addHabitToUser(ctx: Koa.Context) {
 }
 
 export default (router: Router) => {
-  // Sanity check function
   router.post("/habit/new", isAuthenticated(), addHabitToUser);
 };
