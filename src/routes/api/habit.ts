@@ -1,5 +1,6 @@
 import Koa from "koa";
 import Router from "koa-router";
+
 import { isAuthenticated } from "../../auth";
 import User from "../../models/User";
 import Habit, { validateHabitData } from "../../models/Habit";
@@ -21,7 +22,7 @@ async function addHabitToUser(ctx: Koa.Context) {
       habit,
     };
   } else {
-    ctx.body = { status: "error", message: "Invalid data" };
+    ctx.body = { message: "Bad Request" };
     ctx.status = 400;
   }
 }

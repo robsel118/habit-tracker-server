@@ -11,7 +11,7 @@ export interface CompletionType extends mongoose.Document {
 
 export const CompletionSchema = new mongoose.Schema({
   date: {
-    default: () => new Date(new Date().toDateString()), // Should be set by the user for proper time zone management
+    default: () => new Date(new Date().toDateString()), // Temporary should be set by the client for proper time zone management
     type: Date,
   },
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },

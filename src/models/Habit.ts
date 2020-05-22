@@ -57,7 +57,6 @@ export function validateHabitData(obj: Record<string, any>) {
       .items(Joi.number().valid(0, 1, 2, 3, 4, 5, 6))
       .min(1)
       .required(),
-    currentStreak: Joi.number().integer(),
   });
 
   const { error } = schema.validate(obj);
