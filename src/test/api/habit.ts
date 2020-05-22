@@ -2,7 +2,7 @@ export default (agent) => {
   describe("Testing habit and completion API", () => {
     let token, habitId;
     it("should login the user", async () => {
-      const response = await agent.post("/api/auth/login").send({
+      const response = await agent.post("/api/login").send({
         email: "mock-up@tests.com",
         password: "123456",
       });
