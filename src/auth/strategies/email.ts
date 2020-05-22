@@ -1,5 +1,4 @@
-import { Strategy as CustomStrategy } from "passport-custom";
-import { VerifiedCallback } from "passport-local";
+import { Strategy as CustomStrategy, VerifiedCallback } from "passport-custom";
 import bcrypt from "bcrypt";
 
 import User from "../../models/User";

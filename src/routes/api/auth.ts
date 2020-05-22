@@ -40,6 +40,6 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
 }
 
 export default (router: Router) => {
-  router.post("/auth/register", registerUser, generateToken());
-  router.post("/auth/login", authEmail(), generateToken());
+  router.post("/register", registerUser, generateToken());
+  router.post("/login", authEmail(), generateToken());
 };
