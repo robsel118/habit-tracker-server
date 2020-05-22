@@ -7,26 +7,27 @@ import Habit, { validateHabitData } from "../../models/Habit";
 
 async function addHabitToUser(ctx: Koa.Context) {
   const user = await User.findById(ctx.state.user);
-  if (validateHabitData(ctx.request.body)) {
-    const payload = ctx.request.body;
 
-    const habit = new Habit({ ...payload });
-
-    await habit.save();
-    user.habits.addToSet(habit);
-    await user.save();
-
-    ctx.status = 200;
-    ctx.body = {
-      user,
-      habit,
-    };
-  } else {
+  if (!validateHabitData(ctx.request.body)) {
     ctx.body = { message: "Bad Request" };
     ctx.status = 400;
+    return;
   }
+  const payload = ctx.request.body;
+
+  const habit = new Habit({ ...payload });
+
+  await habit.save();
+  user.habits.addToSet(habit);
+  await user.save();
+
+  ctx.status = 200;
+  ctx.body = {
+    user,
+    habit,
+  };
 }
 
 export default (router: Router) => {
-  router.post("/habit/new", isAuthenticated(), addHabitToUser);
+  router.post("/habit", isAuthenticated(), addHabitToUser);
 };

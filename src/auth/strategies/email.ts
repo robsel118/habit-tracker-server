@@ -12,18 +12,18 @@ export default new CustomStrategy(async (ctx, done: VerifiedCallback) => {
       const user = await User.findOne({ email: email.toLowerCase() });
 
       if (!user) {
-        done(null, false, { message: "E-mail not associated to an account." });
+        done(null, false);
       }
 
       const match = await bcrypt.compare(password, user.hash);
 
       if (!match) {
-        done(null, false, { message: "Incorrect password." });
+        done(null, false);
       }
 
       done(null, user);
     } else {
-      done(null, false, { message: "Email or password missing." });
+      done(null, false);
     }
   } catch (error) {
     done(error);

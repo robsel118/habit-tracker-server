@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Joi from "joi";
+import * as R from "ramda";
 
 import { HabitType } from "./Habit";
 
@@ -58,7 +59,7 @@ export function validateNewUserInfo(obj: Record<string, string>) {
 
   const { error } = schema.validate(obj);
 
-  return error == null ? true : false;
+  return R.isNil(error);
 }
 
 const User = mongoose.model<UserType>("User", UserSchema);

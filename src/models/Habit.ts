@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import Joi from "joi";
+import * as R from "ramda";
 
 export enum Day {
   "MONDAY",
@@ -60,7 +61,8 @@ export function validateHabitData(obj: Record<string, any>) {
   });
 
   const { error } = schema.validate(obj);
-  return error == null ? true : false;
+
+  return R.isNil(error);
 }
 
 const Habit = mongoose.model<HabitType>("Habit", HabitSchema);

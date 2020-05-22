@@ -14,7 +14,7 @@ export default (agent) => {
 
     it("should not create a habit", async () => {
       const response = await agent
-        .post("/api/habit/new")
+        .post("/api/habit")
         .set("Authorization", token)
         .send({
           name: "workout",
@@ -26,7 +26,7 @@ export default (agent) => {
 
     it("should create a habit", async () => {
       const response = await agent
-        .post("/api/habit/new")
+        .post("/api/habit")
         .set("Authorization", token)
         .send({
           name: "booze",
@@ -42,7 +42,7 @@ export default (agent) => {
 
     it("should not add a completed habit", async () => {
       const response = await agent
-        .post("/api/completion/new")
+        .put("/api/completion")
         .set("Authorization", token)
         .send({
           habit: habitId,
@@ -52,7 +52,7 @@ export default (agent) => {
     });
     it("should add a completed habit", async () => {
       const response = await agent
-        .post("/api/completion/new")
+        .put("/api/completion")
         .set("Authorization", token)
         .send({
           habit: habitId,

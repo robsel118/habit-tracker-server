@@ -17,6 +17,7 @@
     }
   },
   "dependencies": {
+    "@types/ramda": "0.27.6",
     "bcrypt": "^4.0.1",
     "dotenv": "^8.2.0",
     "joi": "^14.3.1",
@@ -29,7 +30,8 @@
     "mongoose": "^5.9.13",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.0",
-    "passport-local": "^1.0.0"
+    "passport-local": "^1.0.0",
+    "ramda": "0.27.0"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",
