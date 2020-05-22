@@ -30,6 +30,7 @@ export default (agent) => {
       expect(response.status).toBe(400);
       expect(response.body.message).toBe("Bad Request");
     });
+
     it("should login the user", async () => {
       const response = await agent.post("/api/login").send({
         email: "mock-up@tests.com",

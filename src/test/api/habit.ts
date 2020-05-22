@@ -61,5 +61,14 @@ export default (agent) => {
       expect(response.status).toBe(200);
       expect(response.body._id).toBeDefined();
     });
+
+    it("shouldget the user's habit", async () => {
+      const response = await agent
+        .get("/api/habit")
+        .set("Authorization", token);
+
+      expect(response.status).toBe(200);
+      expect(response.body.habits.length).toBe(1);
+    });
   });
 };

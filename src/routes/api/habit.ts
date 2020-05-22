@@ -28,6 +28,15 @@ async function addHabitToUser(ctx: Koa.Context) {
   };
 }
 
+async function getUserHabits(ctx: Koa.Context) {
+  const user = await User.findById(ctx.state.user)
+    .select("habits")
+    .populate("habits");
+
+  ctx.status = 200;
+  ctx.body = { habits: user.habits };
+}
 export default (router: Router) => {
   router.post("/habit", isAuthenticated(), addHabitToUser);
+  router.get("/habit", isAuthenticated(), getUserHabits);
 };
