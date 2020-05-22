@@ -1,6 +1,3 @@
-import User from "models/User";
-import Habit from "models/Habit";
-
 export default (agent) => {
   describe("Testing habit and completion API", () => {
     let token, habitId;
