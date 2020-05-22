@@ -8,6 +8,7 @@ export interface UserType extends mongoose.Document {
   username: string;
   email: string;
   hash: string;
+  tokenExpiry: Date;
   habits: mongoose.Types.Array<HabitType>;
   setHash: (password: string) => string;
 }
@@ -28,6 +29,9 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       trim: true,
+    },
+    tokenExpiry: {
+      type: Date,
     },
     habits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
   },

@@ -45,16 +45,22 @@ export function generateToken() {
     if (user === false) {
       ctx.status = 401;
     } else {
-      const jwtToken = jwt.sign({ id: user }, config.secret, {
-        expiresIn: 60 * 60 * 24 * 365,
-      });
+      const oneYearFromNow = new Date();
+      oneYearFromNow.setFullYear(oneYearFromNow.getFullYear() + 1);
+      const jwtToken = jwt.sign(
+        { id: user, exp: oneYearFromNow.getTime() },
+        config.secret
+      );
 
       // passport-jwt extracts a bearer token instead of JWT token
       const token = `bearer ${jwtToken}`;
 
       const currentUser = await User.findOne({ _id: user }).select(
-        "username email"
+        "username email tokenExpiry"
       );
+      currentUser.tokenExpiry = oneYearFromNow;
+
+      await currentUser.save();
 
       ctx.status = 200;
       ctx.body = {
