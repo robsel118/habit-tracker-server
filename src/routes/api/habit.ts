@@ -36,6 +36,7 @@ async function getUserHabits(ctx: Koa.Context) {
   ctx.status = 200;
   ctx.body = { habits: user.habits };
 }
+
 export default (router: Router) => {
   router.post("/habit", isAuthenticated(), addHabitToUser);
   router.get("/habit", isAuthenticated(), getUserHabits);
