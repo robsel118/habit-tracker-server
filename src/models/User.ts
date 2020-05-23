@@ -1,15 +1,20 @@
 import mongoose from "mongoose";
 import bcrypt from "bcrypt";
 import Joi from "joi";
+import { isNil } from "ramda";
 
-export interface TypeUser extends mongoose.Document {
+import { HabitType } from "./Habit";
+
+export interface UserType extends mongoose.Document {
   username: string;
   email: string;
   hash: string;
+  tokenExpiry: Date;
+  habits: mongoose.Types.Array<HabitType>;
   setHash: (password: string) => string;
 }
 
-export const UserSchema = new mongoose.Schema(
+const UserSchema = new mongoose.Schema(
   {
     username: {
       type: String,
@@ -26,6 +31,10 @@ export const UserSchema = new mongoose.Schema(
       required: true,
       trim: true,
     },
+    tokenExpiry: {
+      type: Date,
+    },
+    habits: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
   },
   {
     timestamps: {
@@ -50,8 +59,8 @@ export function validateNewUserInfo(obj: Record<string, string>) {
 
   const { error } = schema.validate(obj);
 
-  return error == null ? true : false;
+  return isNil(error);
 }
 
-const User = mongoose.model<TypeUser>("User", UserSchema);
+const User = mongoose.model<UserType>("User", UserSchema);
 export default User;
