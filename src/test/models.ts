@@ -1,6 +1,5 @@
 import User, { validateNewUserInfo } from "models/User";
 import Habit, { validateHabitData, Day } from "models/Habit";
-import Completion from "models/Completion";
 
 export default () => {
   describe("testing mongoose model", () => {
@@ -53,25 +52,6 @@ export default () => {
       expect(habit.frequency.length).toBe(1);
       expect(testUser.habits.length).toBe(1);
       expect(testUser.habits[0]._id).toBe(habit._id);
-    });
-
-    it("adds a completion", async () => {
-      const testUser = new User({
-        username: "robert",
-        email: "robert@robert.com",
-        password: "password",
-      });
-      const testHabit = new Habit({
-        name: "Eat Junkt",
-        frequency: [Day.MONDAY, Day.WEDNESDAY],
-      });
-      testUser.habits.push(testHabit);
-
-      const completion = new Completion({ user: testUser });
-      completion.habits.push(testHabit);
-
-      expect(completion.user._id).toBe(testUser._id);
-      expect(completion.habits[0]._id).toBe(testHabit._id);
     });
   });
 };

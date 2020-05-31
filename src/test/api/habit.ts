@@ -40,29 +40,7 @@ export default (agent) => {
       expect(response.body.user).toBeDefined();
     });
 
-    it("should not add a completed habit", async () => {
-      const response = await agent
-        .put("/api/completion")
-        .set("Authorization", token)
-        .send({
-          habit: habitId,
-        });
-      expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
-    });
-    it("should add a completed habit", async () => {
-      const response = await agent
-        .put("/api/completion")
-        .set("Authorization", token)
-        .send({
-          habit: habitId,
-          timestamp: new Date(new Date().toDateString()),
-        });
-      expect(response.status).toBe(200);
-      expect(response.body._id).toBeDefined();
-    });
-
-    it("shouldget the user's habit", async () => {
+    it("should get the user's habit", async () => {
       const response = await agent
         .get("/api/habit")
         .set("Authorization", token);
