@@ -14,7 +14,7 @@ export default (agent) => {
 
     it("should not create a habit", async () => {
       const response = await agent
-        .post("/api/habit")
+        .post("/api/habits")
         .set("Authorization", token)
         .send({
           name: "workout",
@@ -26,7 +26,7 @@ export default (agent) => {
 
     it("should create a habit", async () => {
       const response = await agent
-        .post("/api/habit")
+        .post("/api/habits")
         .set("Authorization", token)
         .send({
           name: "booze",
@@ -42,7 +42,7 @@ export default (agent) => {
 
     it("should get the user's habit", async () => {
       const response = await agent
-        .get("/api/habit")
+        .get("/api/habits")
         .set("Authorization", token);
 
       expect(response.status).toBe(200);

@@ -25,6 +25,5 @@ export default (agent) => {
 
     expect(response.status).toBe(200);
     expect(response.body.habits).toBeDefined();
-    expect(response.body.completions).toBeDefined();
   });
 };

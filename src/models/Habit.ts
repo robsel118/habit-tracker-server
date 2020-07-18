@@ -1,6 +1,17 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { isNil } from "ramda";
+import Daily, { DailyType } from "./Daily";
+import { StreakType } from "./Streak";
+import { UserType } from "./User";
+import moment from "moment";
+import {
+  startOfISOWeek,
+  lastDayOfISOWeek,
+  eachDayOfInterval,
+  startOfDay,
+} from "date-fns";
+import { reduce, includes } from "ramda";
 
 export enum Day {
   "MONDAY",
@@ -16,7 +27,10 @@ export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
   frequency: [number];
-  currentStreak: number;
+  streakList: [StreakType];
+  dailyList: [DailyType];
+  user: UserType;
+  buildWeeklyHabit: () => void;
 }
 
 export const HabitSchema = new mongoose.Schema(
@@ -37,10 +51,9 @@ export const HabitSchema = new mongoose.Schema(
         default: undefined,
       },
     ],
-    currentStreak: {
-      type: Number,
-      default: 0,
-    },
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    streakList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Streak" }],
+    dailyList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Daily" }],
   },
   {
     timestamps: {
@@ -52,7 +65,7 @@ export const HabitSchema = new mongoose.Schema(
 
 export function validateHabitData(obj: Record<string, any>) {
   const schema = Joi.object({
-    name: Joi.string().max(20).required(),
+    name: Joi.string().max(30).required(),
     not: Joi.boolean(),
     frequency: Joi.array()
       .items(Joi.number().valid(0, 1, 2, 3, 4, 5, 6))
@@ -64,6 +77,30 @@ export function validateHabitData(obj: Record<string, any>) {
 
   return isNil(error);
 }
+HabitSchema.methods.buildWeeklyHabit = function () {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const habit = this;
+  const today = moment().toDate();
+  const days = eachDayOfInterval({
+    start: startOfISOWeek(today),
+    end: lastDayOfISOWeek(today),
+  });
+
+  const dailyList = [];
+  days.forEach(async (day, index) => {
+    const value = includes(index, habit.frequency) ? 0 : 1;
+    const daily = new Daily({
+      // habit: habit,
+      date: day,
+      value: value,
+    });
+
+    // await daily.save();
+    dailyList.push(daily);
+    habit.dailyList.push(daily);
+  });
+  return dailyList;
+};
 
 const Habit = mongoose.model<HabitType>("Habit", HabitSchema);
 export default Habit;

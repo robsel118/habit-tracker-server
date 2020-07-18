@@ -18,9 +18,9 @@ describe("Routes", () => {
   });
 
   modelTest();
-  authAPITest(request);
-  habitAPITest(request);
-  userAPITest(request);
+  // authAPITest(request);
+  // habitAPITest(request);
+  // userAPITest(request);
 
   afterAll((done) => {
     mongoose.disconnect();

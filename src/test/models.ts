@@ -22,36 +22,36 @@ export default () => {
       expect(user.email).toBe(payload.email);
     });
   });
-  describe("Habit and Completion model", () => {
-    it("does not creates a habit", async () => {
-      const payload = {
-        name: "Work Out",
-      };
+  // describe("Habit and Completion model", () => {
+  //   it("does not creates a habit", async () => {
+  //     const payload = {
+  //       name: "Work Out",
+  //     };
 
-      expect(validateHabitData(payload)).toBe(false);
-    });
-    it("creates a habit and assign it to the user", async () => {
-      const payload = {
-        name: "Eat Junkt",
-        frequency: [Day.MONDAY],
-        not: true,
-      };
+  //     expect(validateHabitData(payload)).toBe(false);
+  //   });
+  //   it("creates a habit and assign it to the user", async () => {
+  //     const payload = {
+  //       name: "Eat Junkt",
+  //       frequency: [Day.MONDAY],
+  //       not: true,
+  //     };
 
-      const testUser = new User({
-        username: "robert",
-        email: "robert@robert.com",
-        password: "password",
-      });
-      const habit = new Habit({ ...payload });
-      testUser.habits.push(habit);
+  //     const testUser = new User({
+  //       username: "robert",
+  //       email: "robert@robert.com",
+  //       password: "password",
+  //     });
+  //     const habit = new Habit({ ...payload });
+  //     testUser.habits.push(habit);
 
-      expect(validateHabitData(payload)).toBe(true);
-      expect(habit.currentStreak).toBe(0);
-      expect(habit.name).toBe(payload.name);
-      expect(habit.not);
-      expect(habit.frequency.length).toBe(1);
-      expect(testUser.habits.length).toBe(1);
-      expect(testUser.habits[0]._id).toBe(habit._id);
-    });
-  });
+  //     expect(validateHabitData(payload)).toBe(true);
+  //     expect(habit.currentStreak).toBe(0);
+  //     expect(habit.name).toBe(payload.name);
+  //     expect(habit.not);
+  //     expect(habit.frequency.length).toBe(1);
+  //     expect(testUser.habits.length).toBe(1);
+  //     expect(testUser.habits[0]._id).toBe(habit._id);
+  //   });
+  // });
 };
