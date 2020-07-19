@@ -18,7 +18,7 @@ export enum DailyState {
 export interface DailyType extends mongoose.Document {
   value: DailyState;
   date: Date;
-  // habit: HabitType;
+  habit: HabitType;
 }
 
 const DailySchema = new mongoose.Schema({
@@ -31,6 +31,7 @@ const DailySchema = new mongoose.Schema({
     default: 0,
     enum: [0, 1, 2],
   },
+  habit: { type: mongoose.Schema.Types.ObjectId, ref: "Habit" },
 });
 
 // DailySchema.methods.toggleHabit = function (habitId: string) {

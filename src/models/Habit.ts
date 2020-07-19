@@ -27,9 +27,6 @@ export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
   frequency: [number];
-  streakList: [StreakType];
-  dailyList: [DailyType];
-  user: UserType;
   buildWeeklyHabit: () => void;
 }
 
@@ -51,9 +48,6 @@ export const HabitSchema = new mongoose.Schema(
         default: undefined,
       },
     ],
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
-    streakList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Streak" }],
-    dailyList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Daily" }],
   },
   {
     timestamps: {
@@ -87,17 +81,16 @@ HabitSchema.methods.buildWeeklyHabit = function () {
   });
 
   const dailyList = [];
-  days.forEach(async (day, index) => {
+  days.forEach((day, index) => {
     const value = includes(index, habit.frequency) ? 0 : 1;
     const daily = new Daily({
-      // habit: habit,
+      habit: habit,
       date: day,
       value: value,
     });
 
     // await daily.save();
     dailyList.push(daily);
-    habit.dailyList.push(daily);
   });
   return dailyList;
 };

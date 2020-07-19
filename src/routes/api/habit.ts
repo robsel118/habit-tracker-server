@@ -1,9 +1,10 @@
 import Koa from "koa";
 import Router from "koa-router";
 import moment from "moment";
-import { includes, isEmpty } from "ramda";
+import { includes, isEmpty, filter, equals } from "ramda";
 import { isAuthenticated } from "../../auth";
 import Daily, { DailyState } from "../../models/Daily";
+import User from "../../models/User";
 import Habit, { validateHabitData } from "../../models/Habit";
 import {
   startOfISOWeek,
@@ -13,6 +14,7 @@ import {
   isBefore,
   getISOWeek,
 } from "date-fns";
+import habit from "test/api/habit";
 
 async function addHabitToUser(ctx: Koa.Context) {
   if (!validateHabitData(ctx.request.body)) {
@@ -22,27 +24,27 @@ async function addHabitToUser(ctx: Koa.Context) {
   }
   const payload = ctx.request.body;
 
-  const habit = new Habit({ ...payload, user: ctx.state.user });
-
+  const habit = new Habit({ ...payload });
   await habit.save();
+
+  await User.findByIdAndUpdate(ctx.state.user._id, {
+    $push: { habitList: habit },
+  });
 
   ctx.status = 201;
   ctx.body = habit;
 }
 
 async function getUserHabits(ctx: Koa.Context) {
-  const habitList = await Habit.find({ user: ctx.state.user }).populate(
-    "habits"
-  );
-
+  const user = await User.findById(ctx.state.user).populate("habitList");
   ctx.status = 200;
-  ctx.body = habitList;
+  ctx.body = user.habitList;
 }
 
-async function getDailyHabitsState(ctx: Koa.Context) {
+async function getWeeklyHabits(ctx: Koa.Context) {
   const payload = ctx.request.body;
 
-  //d efault to current week
+  //default to current week
   const start = payload.start
     ? startOfDay(new Date(payload.start))
     : startOfISOWeek(moment().toDate());
@@ -55,33 +57,36 @@ async function getDailyHabitsState(ctx: Koa.Context) {
     ctx.status = 400;
     return;
   }
-  console.log(ctx.params.id);
-  const habit = await Habit.findById(ctx.params.id).populate({
-    path: "dailyList",
-    match: {
-      date: {
-        $gte: start,
-        $lte: end,
-      },
+
+  const user = await User.findById(ctx.state.user).populate(
+    "habitList",
+    "name not frequency"
+  );
+
+  const habits = user.habitList;
+
+  const dailyList = await Daily.find({
+    date: {
+      $gte: start,
+      $lte: end,
     },
-    select: "value date",
-    model: "Daily",
-  });
+    habit: {
+      $in: habits,
+    },
+  }).select("date value habit");
 
-  //Initialize the week on the first query of the week
-  // NOT IDEAL MUST be redone
-  // if (
-  //   isEmpty(habit.dailyList) &&
-  //   getISOWeek(start) == getISOWeek(moment().toDate())
-  // ) {
-  //   const dailyList = habit.buildWeeklyHabit();
-  //   const newDailyList = await Daily.create(dailyList);
+  const data = habits.reduce((acc, habit) => {
+    const habitData = {
+      habit,
+      dailyList: filter((daily) => {
+        return equals(habit._id, daily.habit);
+      }, dailyList),
+    };
+    return [...acc, habitData];
+  }, []);
 
-  //   await habit.save();
-  // }
-  // const daily = await Daily.find({});
   ctx.status = 200;
-  ctx.body = habit;
+  ctx.body = data;
 }
 
 async function setDailyHabitState(ctx: Koa.Context) {
@@ -90,32 +95,31 @@ async function setDailyHabitState(ctx: Koa.Context) {
   // - [] update Streak
 
   const payload = ctx.request.body;
-
-  if (payload.daily || payload.date || payload.value || payload.value !== 1) {
+  if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLT_DONE) {
     ctx.body = { message: "Bad Request" };
     ctx.status = 400;
     return;
   }
 
-  const habit = await Habit.findById(ctx.params.id);
+  const daily = await Daily.findOne({
+    _id: ctx.params.daily,
+    habit: ctx.params.habit,
+  });
 
-  if (
-    habit.user != ctx.state.user ||
-    !includes(payload.daily, habit.dailyList)
-  ) {
+  if (!daily) {
     ctx.body = { message: "Bad Request" };
     ctx.status = 400;
     return;
   }
 
-  const daily = await Daily.findOneAndUpdate(
-    {
-      daily: payload.daily,
-      date: startOfDay(payload.date),
-    },
-    { value: payload.value },
-    { new: payload.value }
-  );
+  // check habit ownership
+  if (!includes(daily.habit, ctx.state.user.habitList)) {
+    ctx.body = { message: "Bad Request" };
+    ctx.status = 400;
+    return;
+  }
+  daily.value = payload.value;
+  await daily.save();
 
   ctx.status = 200;
   ctx.body = daily;
@@ -125,13 +129,9 @@ export default (router: Router) => {
   router.post("/habits", isAuthenticated(), addHabitToUser);
   router.get("/habits", isAuthenticated(), getUserHabits);
   router.put(
-    "/habits/:id/checkDailyHabit",
+    "/habits/:habit/dailys/:daily",
     isAuthenticated(),
     setDailyHabitState
   );
-  router.get(
-    "/habits/:id/checkDailyHabit",
-    isAuthenticated(),
-    getDailyHabitsState
-  );
+  router.get("/habits/weekly", isAuthenticated(), getWeeklyHabits);
 };
