@@ -59,12 +59,11 @@ export const HabitSchema = new mongoose.Schema(
 
 export function validateHabitData(obj: Record<string, any>) {
   const schema = Joi.object({
-    name: Joi.string().max(30).required(),
+    name: Joi.string().max(30),
     not: Joi.boolean(),
     frequency: Joi.array()
       .items(Joi.number().valid(0, 1, 2, 3, 4, 5, 6))
-      .min(1)
-      .required(),
+      .min(1),
   });
 
   const { error } = schema.validate(obj);
