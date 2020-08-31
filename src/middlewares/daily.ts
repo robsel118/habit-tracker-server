@@ -2,8 +2,6 @@ import Koa from "koa";
 import Daily, { DailyState } from "../models/Daily";
 
 export async function retrieveDailyList(ctx: Koa.Context, next: Koa.Next) {
-  const habits = ctx.state.user.habitList;
-
   const dailyList = await Daily.find({
     date: {
       $gte: ctx.state.start,

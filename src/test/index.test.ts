@@ -18,8 +18,8 @@ describe("Routes", () => {
   });
 
   modelTest();
-  // authAPITest(request);
-  // habitAPITest(request);
+  authAPITest(request);
+  habitAPITest(request);
   // userAPITest(request);
 
   afterAll((done) => {

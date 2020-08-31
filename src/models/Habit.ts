@@ -1,17 +1,10 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { isNil } from "ramda";
-import Daily, { DailyType } from "./Daily";
-import { StreakType } from "./Streak";
-import { UserType } from "./User";
+import Daily from "./Daily";
 import moment from "moment";
-import {
-  startOfISOWeek,
-  lastDayOfISOWeek,
-  eachDayOfInterval,
-  startOfDay,
-} from "date-fns";
-import { reduce, includes } from "ramda";
+import { startOfDay, eachDayOfInterval } from "date-fns";
+import { includes } from "ramda";
 
 export enum Day {
   "MONDAY",
@@ -27,7 +20,7 @@ export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
   frequency: [number];
-  buildWeeklyHabit: () => void;
+  buildDailys: () => void;
 }
 
 export const HabitSchema = new mongoose.Schema(
@@ -59,24 +52,24 @@ export const HabitSchema = new mongoose.Schema(
 
 export function validateHabitData(obj: Record<string, any>) {
   const schema = Joi.object({
-    name: Joi.string().max(30),
+    name: Joi.string().max(30).required(),
     not: Joi.boolean(),
     frequency: Joi.array()
       .items(Joi.number().valid(0, 1, 2, 3, 4, 5, 6))
-      .min(1),
+      .min(1)
+      .required(),
   });
 
   const { error } = schema.validate(obj);
 
   return isNil(error);
 }
-HabitSchema.methods.buildWeeklyHabit = function () {
+HabitSchema.methods.buildDailys = function (start: Date, end: Date) {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const habit = this;
-  const today = moment().toDate();
   const days = eachDayOfInterval({
-    start: startOfISOWeek(today),
-    end: lastDayOfISOWeek(today),
+    start: startOfDay(start),
+    end: startOfDay(end),
   });
 
   const dailyList = [];
@@ -88,7 +81,6 @@ HabitSchema.methods.buildWeeklyHabit = function () {
       value: value,
     });
 
-    // await daily.save();
     dailyList.push(daily);
   });
   return dailyList;

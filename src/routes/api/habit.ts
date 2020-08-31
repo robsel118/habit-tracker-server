@@ -38,7 +38,6 @@ export default (router: Router) => {
     isAuthenticated(),
     _habit.checkHabitOwnership,
     _daily.updateDailyHabitState,
-    _daily.retrieveDailyList,
-    _streak.rebuildStreak
+    _daily.retrieveDailyList
   );
 };

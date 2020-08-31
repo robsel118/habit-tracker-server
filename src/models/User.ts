@@ -3,7 +3,7 @@ import bcrypt from "bcrypt";
 import Joi from "joi";
 import { isNil } from "ramda";
 import { HabitType } from "./Habit";
-
+import { startOfDay } from "date-fns";
 export interface UserType extends mongoose.Document {
   username: string;
   email: string;
@@ -11,6 +11,7 @@ export interface UserType extends mongoose.Document {
   tokenExpiry: Date;
   habitList: [HabitType];
   setHash: (password: string) => string;
+  lastConnected: Date;
 }
 
 const UserSchema = new mongoose.Schema(
@@ -34,6 +35,10 @@ const UserSchema = new mongoose.Schema(
       type: Date,
     },
     habitList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
+    lastConnected: {
+      type: Date,
+      default: startOfDay(new Date()),
+    },
   },
   {
     timestamps: {

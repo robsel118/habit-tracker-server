@@ -6,9 +6,11 @@ import {
   lastDayOfISOWeek,
   startOfDay,
   isBefore,
+  isSameDay,
 } from "date-fns";
 import { DailyType } from "../models/Daily";
 import User from "../models/User";
+import Daily from "../models/Daily";
 import Habit, { validateHabitData } from "../models/Habit";
 
 export async function checkHabitOwnership(ctx: Koa.Context, next: Koa.Next) {
@@ -62,7 +64,6 @@ export async function addHabitToUser(ctx: Koa.Context) {
   await User.findByIdAndUpdate(ctx.state.user._id, {
     $push: { habitList: habit },
   });
-
   ctx.status = 201;
   ctx.body = habit;
 }
@@ -100,6 +101,25 @@ export async function getWeeklyHabits(ctx: Koa.Context) {
 
   ctx.status = 200;
   ctx.body = data;
+}
+
+export async function buildMissingHabits(ctx: Koa.Context, next: Koa.Next) {
+  const today = new Date();
+  if (!isSameDay(ctx.state.user.lastConnected, today)) {
+    const dailys = [];
+
+    ctx.state.habits.forEach((habit) => {
+      dailys.push(habit.buildDailys(ctx.state.user.lastConnected, today));
+    });
+
+    await Daily.insertMany(dailys);
+
+    ctx.state.user.lastConnected = today;
+    await User.findByIdAndUpdate(ctx.state.user._id, {
+      lastConnected: ctx.state.user.lastConnected,
+    });
+  }
+  return next();
 }
 
 export async function getUserHabits(ctx: Koa.Context) {
