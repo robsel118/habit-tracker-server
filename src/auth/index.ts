@@ -56,7 +56,7 @@ export function generateToken() {
       const token = `bearer ${jwtToken}`;
 
       const currentUser = await User.findOne({ _id: user }).select(
-        "username email tokenExpiry lastConnected"
+        "username email tokenExpiry"
       );
       currentUser.tokenExpiry = oneYearFromNow;
 

@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export default (agent) => {
   describe("Auth API", () => {
     it("should not register with invalide email", async () => {
@@ -14,6 +16,7 @@ export default (agent) => {
         username: "robert",
         email: "mock-up@tests.com",
         password: "123456",
+        lastConnected: moment("09-19-2020", "MM-DD-YYYY").toDate(),
       });
       expect(response.status).toBe(200);
       expect(response.body.token).toBeDefined();

@@ -39,7 +39,7 @@ const UserSchema = new mongoose.Schema(
     habitList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
     lastConnected: {
       type: Date,
-      default: startOfDay(moment("09-19-2020", "MM-DD-YYYY").toDate()),
+      default: startOfDay(moment().toDate()),
     },
   },
   {
@@ -60,6 +60,7 @@ export function validateNewUserInfo(obj: Record<string, string>) {
     username: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),
     password: Joi.string().regex(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
+    lastConnected: Joi.date(),
   });
 
   const { error } = schema.validate(obj);

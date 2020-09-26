@@ -8,7 +8,6 @@ export default (agent) => {
         password: "123456",
       });
       token = response.body.token;
-
       expect(response.status).toBe(200);
       expect(response.body.token).toBeDefined();
     });

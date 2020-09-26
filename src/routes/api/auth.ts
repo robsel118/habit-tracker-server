@@ -27,7 +27,7 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
     return;
   }
 
-  user = new User({ username, email: email.toLowerCase(), other });
+  user = new User({ username, email: email.toLowerCase(), ...other });
 
   await user.setHash(password);
   await user.save();
