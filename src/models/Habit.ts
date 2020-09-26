@@ -1,10 +1,9 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { isNil } from "ramda";
-import Daily, { DailyState } from "./Daily";
-import moment from "moment";
 import { startOfDay, eachDayOfInterval } from "date-fns";
 import { includes } from "ramda";
+import Daily, { DailyState } from "./Daily";
 
 export enum Day {
   "MONDAY",

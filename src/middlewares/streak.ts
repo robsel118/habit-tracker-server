@@ -1,20 +1,18 @@
 import Koa from "koa";
 
 import Streak from "../models/Streak";
-import Daily, { DailyState } from "../models/Daily";
-import moment from "moment";
-import { startOfToday, areIntervalsOverlapping } from "date-fns";
-import { filter } from "ramda";
+import { DailyState } from "../models/Daily";
+
 export async function rebuildStreak(ctx: Koa.Context) {
-  const streakList = await Streak.find({
-    habit: ctx.params.habit,
-    endDate: {
-      $gte: ctx.state.streakStart,
-    },
-    startDate: {
-      $lte: ctx.state.streakStart,
-    },
-  });
+  // const streakList = await Streak.find({
+  //   habit: ctx.params.habit,
+  //   endDate: {
+  //     $gte: ctx.state.streakStart,
+  //   },
+  //   startDate: {
+  //     $lte: ctx.state.streakStart,
+  //   },
+  // });
 
   let startDate: Date = null;
   let lastCompleted: Date = null;

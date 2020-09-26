@@ -5,6 +5,7 @@ import { isNil } from "ramda";
 import { HabitType } from "./Habit";
 import { startOfDay } from "date-fns";
 import moment from "moment";
+
 export interface UserType extends mongoose.Document {
   username: string;
   email: string;
@@ -55,7 +56,6 @@ UserSchema.methods.setHash = async function (password: string) {
 };
 
 export function validateNewUserInfo(obj: Record<string, string>) {
-  // TODO define password complexity
   const schema = Joi.object({
     username: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),

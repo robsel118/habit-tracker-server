@@ -1,13 +1,6 @@
 import mongoose from "mongoose";
+import { startOfDay } from "date-fns";
 import { HabitType } from "./Habit";
-import moment from "moment";
-import {
-  startOfISOWeek,
-  lastDayOfISOWeek,
-  eachDayOfInterval,
-  startOfDay,
-} from "date-fns";
-import { reduce, includes } from "ramda";
 
 export enum DailyState {
   NOT_DONE = 0,
@@ -33,22 +26,6 @@ const DailySchema = new mongoose.Schema({
   },
   habit: { type: mongoose.Schema.Types.ObjectId, ref: "Habit" },
 });
-
-// DailySchema.methods.toggleHabit = function (habitId: string) {
-//   const currentValue = this.habits.get(habitId);
-
-//   this.habits.set(habitId, !currentValue);
-
-//   const completed = reduce(
-//     (acc: number, value: boolean) => {
-//       if (value) acc++;
-//       return acc;
-//     },
-//     0,
-//     this.habits.values()
-//   );
-//   this.completion = (completed / this.habits.size) * 100;
-// };
 
 const Daily = mongoose.model<DailyType>("Daily", DailySchema);
 export default Daily;
