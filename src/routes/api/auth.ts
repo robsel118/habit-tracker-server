@@ -5,7 +5,7 @@ import User, { validateNewUserInfo } from "../../models/User";
 import { authEmail, generateToken } from "../../auth";
 
 async function registerUser(ctx: Koa.Context, next: Koa.Next) {
-  const { username, email, password } = ctx.request.body;
+  const { username, email, password, ...other } = ctx.request.body;
 
   if (
     !username ||
@@ -27,7 +27,7 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
     return;
   }
 
-  user = new User({ username, email: email.toLowerCase() });
+  user = new User({ username, email: email.toLowerCase(), other });
 
   await user.setHash(password);
   await user.save();

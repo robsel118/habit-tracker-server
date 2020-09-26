@@ -5,9 +5,15 @@ export default (agent) => {
     let token, habitId;
 
     it("should login the user", async () => {
+      const today = new Date();
       const response = await agent.post("/api/login").send({
         email: "mock-up@tests.com",
         password: "123456",
+        lastConnected: new Date(
+          today.getFullYear(),
+          today.getMonth(),
+          today.getDate() - 7
+        ),
       });
       token = response.body.token;
 
