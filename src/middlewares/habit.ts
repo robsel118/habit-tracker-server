@@ -8,7 +8,7 @@ import {
   isBefore,
   isSameDay,
 } from "date-fns";
-import { DailyType } from "../models/Daily";
+import { DailyState, DailyType } from "../models/Daily";
 import User from "../models/User";
 import Daily from "../models/Daily";
 import Habit, { validateHabitData } from "../models/Habit";
@@ -103,13 +103,12 @@ export async function getWeeklyHabits(ctx: Koa.Context) {
   ctx.body = data;
 }
 
-export async function buildMissingHabits(ctx: Koa.Context, next: Koa.Next) {
+export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
   const today = new Date();
   if (!isSameDay(ctx.state.user.lastConnected, today)) {
-    const dailys = [];
-
+    const dailys: DailyState[] = [];
     ctx.state.habits.forEach((habit) => {
-      dailys.push(habit.buildDailys(ctx.state.user.lastConnected, today));
+      dailys.push(...habit.buildDailys(ctx.state.user.lastConnected, today));
     });
 
     await Daily.insertMany(dailys);
@@ -119,6 +118,7 @@ export async function buildMissingHabits(ctx: Koa.Context, next: Koa.Next) {
       lastConnected: ctx.state.user.lastConnected,
     });
   }
+
   return next();
 }
 

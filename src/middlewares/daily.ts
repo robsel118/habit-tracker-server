@@ -4,13 +4,13 @@ import Daily, { DailyState } from "../models/Daily";
 export async function retrieveDailyList(ctx: Koa.Context, next: Koa.Next) {
   const dailyList = await Daily.find({
     date: {
-      $gte: ctx.state.start,
-      $lte: ctx.state.end,
+      $gte: ctx.state.dateStart,
+      $lte: ctx.state.dateEnd,
     },
     habit: ctx.params.habit || {
       $in: ctx.state.user.habitList,
     },
-  }).select("date value habit");
+  });
 
   ctx.state.dailyList = dailyList;
 

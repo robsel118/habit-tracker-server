@@ -3,7 +3,6 @@ import { isAuthenticated } from "../../auth";
 
 import * as _habit from "../../middlewares/habit";
 import * as _daily from "../../middlewares/daily";
-import * as _streak from "../../middlewares/streak";
 
 export default (router: Router) => {
   router.get(
@@ -22,8 +21,9 @@ export default (router: Router) => {
     "/habits/weekly",
     isAuthenticated(),
     _habit.extractDateRange,
-    _daily.retrieveDailyList,
     _habit.retrieveHabits,
+    _habit.buildMissingDailyList,
+    _daily.retrieveDailyList,
     _habit.getWeeklyHabits
   );
   router.put(

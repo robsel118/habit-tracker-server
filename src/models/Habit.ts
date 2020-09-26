@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { isNil } from "ramda";
-import Daily from "./Daily";
+import Daily, { DailyState } from "./Daily";
 import moment from "moment";
 import { startOfDay, eachDayOfInterval } from "date-fns";
 import { includes } from "ramda";
@@ -64,7 +64,10 @@ export function validateHabitData(obj: Record<string, any>) {
 
   return isNil(error);
 }
-HabitSchema.methods.buildDailys = function (start: Date, end: Date) {
+HabitSchema.methods.buildDailys = function (
+  start: Date,
+  end: Date
+): DailyState[] {
   // eslint-disable-next-line @typescript-eslint/no-this-alias
   const habit = this;
   const days = eachDayOfInterval({
@@ -76,11 +79,10 @@ HabitSchema.methods.buildDailys = function (start: Date, end: Date) {
   days.forEach((day, index) => {
     const value = includes(index, habit.frequency) ? 0 : 1;
     const daily = new Daily({
-      habit: habit,
+      habit: habit._id,
       date: day,
       value: value,
     });
-
     dailyList.push(daily);
   });
   return dailyList;

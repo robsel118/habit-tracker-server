@@ -13,8 +13,8 @@ services:
         environment:
             - MONGO_DATA_DIR=/data/db
             - MONGO_LOG_DIR=/dev/null
-        volumes:
-            - ./data/db:/data/db
+        # volumes:
+        #     - ./data/db:/data/db
         command: mongod --logpath=/dev/null # --quiet
         ports: 
             - 27017:27017

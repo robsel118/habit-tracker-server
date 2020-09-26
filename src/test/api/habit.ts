@@ -5,15 +5,9 @@ export default (agent) => {
     let token, habitId;
 
     it("should login the user", async () => {
-      const today = new Date();
       const response = await agent.post("/api/login").send({
         email: "mock-up@tests.com",
         password: "123456",
-        lastConnected: new Date(
-          today.getFullYear(),
-          today.getMonth(),
-          today.getDate() - 7
-        ),
       });
       token = response.body.token;
 
@@ -77,7 +71,7 @@ export default (agent) => {
       expect(response.status).toBe(400);
     });
 
-    it("should not update the user's habits", async () => {
+    it("should update the user's habits", async () => {
       const response = await agent
         .put(`/api/habits/${habitId}`)
         .set("Authorization", token)
@@ -94,7 +88,8 @@ export default (agent) => {
       const response = await agent
         .get(`/api/habits/weekly`)
         .set("Authorization", token);
-      expect(response.status).toBe(200);
+      expect(response.body.length).toBe(1);
+      expect(response.body[0].dailyList.length).toBeGreaterThan(1);
     });
 
     // it("should get the user's weekly habits and dailys", async () => {

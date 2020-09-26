@@ -4,6 +4,7 @@ import Joi from "joi";
 import { isNil } from "ramda";
 import { HabitType } from "./Habit";
 import { startOfDay } from "date-fns";
+import moment from "moment";
 export interface UserType extends mongoose.Document {
   username: string;
   email: string;
@@ -37,7 +38,7 @@ const UserSchema = new mongoose.Schema(
     habitList: [{ type: mongoose.Schema.Types.ObjectId, ref: "Habit" }],
     lastConnected: {
       type: Date,
-      default: startOfDay(new Date()),
+      default: startOfDay(moment("09-19-2020", "MM-DD-YYYY").toDate()),
     },
   },
   {
