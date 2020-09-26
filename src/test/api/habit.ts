@@ -1,6 +1,6 @@
 export default (agent) => {
   describe("Testing habit and completion API", () => {
-    let token, habitId;
+    let token, habitId, dailyId;
 
     it("should login the user", async () => {
       const response = await agent.post("/api/login").send({
@@ -86,19 +86,33 @@ export default (agent) => {
       const response = await agent
         .get(`/api/habits/weekly`)
         .set("Authorization", token);
+      dailyId = response.body[0].dailyList[0]._id;
+      expect(response.status).toBe(200);
+
       expect(response.body.length).toBe(1);
       expect(response.body[0].dailyList.length).toBeGreaterThan(1);
     });
 
-    // it("should get the user's weekly habits and dailys", async () => {
-    //   const habit = await Habit.findById(habitId);
+    it("should not update a habits value", async () => {
+      const response = await agent
+        .put(`/api/habits/${habitId}/dailys/${dailyId}`)
+        .set("Authorization", token)
+        .send({
+          value: 1,
+        });
+      expect(response.status).toBe(400);
+    });
+    it("should update a habits value", async () => {
+      const response = await agent
+        .put(`/api/habits/${habitId}/dailys/${dailyId}`)
+        .set("Authorization", token)
+        .send({
+          value: 2,
+        });
+      expect(response.status).toBe(200);
 
-    //   const response = await agent
-    //     .get("/api/habits/weekly")
-    //     .set("Authorization", token);
-
-    //   expect(response.status).toBe(200);
-    //   expect(response.body.habits.length).toBe(1);
-    // });
+      expect(response.body).toBeDefined();
+      expect(response.body.value).toBe(2);
+    });
   });
 };

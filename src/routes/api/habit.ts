@@ -37,7 +37,6 @@ export default (router: Router) => {
     "/habits/:habit/dailys/:daily",
     isAuthenticated(),
     _habit.checkHabitOwnership,
-    _daily.updateDailyHabitState,
-    _daily.retrieveDailyList
+    _daily.updateDailyHabitState
   );
 };

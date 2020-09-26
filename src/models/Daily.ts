@@ -4,7 +4,7 @@ import { HabitType } from "./Habit";
 
 export enum DailyState {
   NOT_DONE = 0,
-  IMPLICITLT_DONE = 1,
+  IMPLICITLY_DONE = 1,
   EXPLICITLY_DONE = 2,
 }
 

@@ -23,7 +23,8 @@ export async function updateDailyHabitState(ctx: Koa.Context, next: Koa.Next) {
   // - [] update Streak
 
   const payload = ctx.request.body;
-  if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLT_DONE) {
+
+  if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLY_DONE) {
     ctx.body = { message: "Bad Request" };
     ctx.status = 400;
     return;
@@ -40,12 +41,15 @@ export async function updateDailyHabitState(ctx: Koa.Context, next: Koa.Next) {
     return;
   }
 
-  daily.value = payload.value;
-  await daily.save();
+  if (daily.value != DailyState.IMPLICITLY_DONE) {
+    daily.value = payload.value;
+    await daily.save();
+  }
 
-  // await for next middle ware to update the streaks
-  await next();
   // TODO update Streak
+  // await for next middle ware to update the streaks
+  // await next();
+
   ctx.status = 200;
   ctx.body = daily;
 }

@@ -3,7 +3,6 @@ import compose from "koa-compose";
 import koaSwagger from "koa2-swagger-ui";
 import spec from "../swagger";
 import authServices from "./api/auth";
-import userServices from "./api/user";
 import habitServices from "./api/habit";
 
 const router = new Router({
@@ -16,7 +15,6 @@ router.get(
 );
 
 authServices(router);
-userServices(router);
 habitServices(router);
 
 export default () => compose([router.routes(), router.allowedMethods()]);

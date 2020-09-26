@@ -5,7 +5,6 @@ import connectDatabase from "../db";
 import modelTest from "./models";
 import authAPITest from "./api/auth";
 import habitAPITest from "./api/habit";
-import userAPITest from "./api/user";
 import User from "models/User";
 import Habit from "models/Habit";
 const request = supertest.agent(app.callback());
@@ -20,7 +19,6 @@ describe("Routes", () => {
   modelTest();
   authAPITest(request);
   habitAPITest(request);
-  // userAPITest(request);
 
   afterAll((done) => {
     mongoose.disconnect();
