@@ -11,7 +11,7 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
     !username ||
     !email ||
     !password ||
-    !validateNewUserInfo(ctx.request.body)
+    !validateNewUserInfo({ username, email, password })
   ) {
     ctx.status = 400;
     ctx.body = { message: "Bad Request" };

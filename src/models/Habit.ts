@@ -18,7 +18,7 @@ export enum Day {
 export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
-  frequency: [number];
+  frequency: number[];
   buildDailys: (start: Date, end: Date) => void;
 }
 

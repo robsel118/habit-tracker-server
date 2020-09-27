@@ -1,6 +1,5 @@
 import User, { validateNewUserInfo } from "models/User";
 import Habit, { validateHabitData, Day } from "models/Habit";
-import moment from "moment";
 
 export default () => {
   describe("testing mongoose model", () => {

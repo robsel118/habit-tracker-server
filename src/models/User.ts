@@ -11,7 +11,7 @@ export interface UserType extends mongoose.Document {
   email: string;
   hash: string;
   tokenExpiry: Date;
-  habitList: [HabitType];
+  habitList: HabitType[];
   setHash: (password: string) => string;
   lastConnected: Date;
 }
@@ -60,7 +60,6 @@ export function validateNewUserInfo(obj: Record<string, string>) {
     username: Joi.string().alphanum().min(4).max(30).required(),
     email: Joi.string().email().required(),
     password: Joi.string().regex(new RegExp("^[a-zA-Z0-9]{6,30}$")).required(),
-    lastConnected: Joi.date(),
   });
 
   const { error } = schema.validate(obj);
