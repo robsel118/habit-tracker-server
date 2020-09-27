@@ -41,10 +41,8 @@ export async function updateDailyHabitState(ctx: Koa.Context, next: Koa.Next) {
     return;
   }
 
-  if (daily.value != DailyState.IMPLICITLY_DONE) {
-    daily.value = payload.value;
-    await daily.save();
-  }
+  daily.value = payload.value;
+  await daily.save();
 
   // TODO update Streak
   // await for next middle ware to update the streaks

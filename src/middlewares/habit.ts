@@ -103,8 +103,12 @@ export async function getWeeklyHabits(ctx: Koa.Context) {
   ctx.body = data;
 }
 
+
+// Checks the last connection time and builds the dailys in-between
 export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
+
   const today = new Date();
+  
   if (!isSameDay(ctx.state.user.lastConnected, today)) {
     const dailys: DailyState[] = [];
     ctx.state.habits.forEach((habit) => {
@@ -114,6 +118,7 @@ export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
     await Daily.insertMany(dailys);
 
     ctx.state.user.lastConnected = today;
+    
     await User.findByIdAndUpdate(ctx.state.user._id, {
       lastConnected: ctx.state.user.lastConnected,
     });

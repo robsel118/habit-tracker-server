@@ -4,7 +4,7 @@ import { HabitType } from "./Habit";
 
 export enum DailyState {
   NOT_DONE = 0,
-  IMPLICITLY_DONE = 1,
+  IMPLICITLY_DONE = 1, // task done as no completion is expected
   EXPLICITLY_DONE = 2,
 }
 

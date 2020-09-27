@@ -19,7 +19,7 @@ export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
   frequency: [number];
-  buildDailys: () => void;
+  buildDailys: (start: Date, end: Date) => void;
 }
 
 export const HabitSchema = new mongoose.Schema(
