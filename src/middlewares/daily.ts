@@ -1,5 +1,6 @@
 import Koa from "koa";
 import Daily, { DailyState } from "../models/Daily";
+import { BAD_REQUEST } from "../utils/errors";
 
 export async function retrieveDailyList(ctx: Koa.Context, next: Koa.Next) {
   const dailyList = await Daily.find({
@@ -24,22 +25,15 @@ export async function updateDailyHabitState(ctx: Koa.Context, next: Koa.Next) {
 
   const payload = ctx.request.body;
 
-  if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLY_DONE) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
+  if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLY_DONE)
+    ctx.throw(400, BAD_REQUEST);
 
   const daily = await Daily.findOne({
     _id: ctx.params.daily,
     habit: ctx.params.habit,
   });
 
-  if (!daily) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
+  ctx.assert(daily, 400, BAD_REQUEST);
 
   daily.value = payload.value;
   await daily.save();

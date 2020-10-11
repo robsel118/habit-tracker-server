@@ -19,9 +19,9 @@ export default (agent) => {
         .send({
           name: "workout",
         });
-
+      console.log(response.text);
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
+      expect(response.text).toBe("Bad Request");
     });
 
     it("should create a habit", async () => {

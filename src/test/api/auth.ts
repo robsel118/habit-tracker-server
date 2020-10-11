@@ -8,7 +8,7 @@ export default (agent) => {
         .send({ username: "robert", email: "robert", password: "123456" });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
+      expect(response.text).toBe("Bad Request");
     });
 
     it("should register a user", async () => {
@@ -30,7 +30,7 @@ export default (agent) => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
+      expect(response.text).toBe("Bad Request");
     });
 
     it("should login the user", async () => {

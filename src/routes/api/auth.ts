@@ -3,6 +3,7 @@ import Router from "koa-router";
 
 import User, { validateNewUserInfo } from "../../models/User";
 import { authEmail, generateToken } from "../../auth";
+import { BAD_REQUEST } from "../../utils/errors";
 
 async function registerUser(ctx: Koa.Context, next: Koa.Next) {
   const { username, email, password, ...other } = ctx.request.body;
@@ -12,20 +13,13 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
     !email ||
     !password ||
     !validateNewUserInfo({ username, email, password })
-  ) {
-    ctx.status = 400;
-    ctx.body = { message: "Bad Request" };
-    return;
-  }
+  )
+    ctx.throw(400, BAD_REQUEST);
 
   //Checks it the user already exists
   let user = await User.findOne({ email: email.toLowerCase() });
 
-  if (user) {
-    ctx.status = 400;
-    ctx.body = { status: "error", message: "Bad Request" };
-    return;
-  }
+  if (user) ctx.throw(400, BAD_REQUEST);
 
   user = new User({ username, email: email.toLowerCase(), ...other });
 

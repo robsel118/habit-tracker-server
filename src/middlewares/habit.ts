@@ -12,13 +12,12 @@ import { DailyState, DailyType } from "../models/Daily";
 import User from "../models/User";
 import Daily from "../models/Daily";
 import Habit, { validateHabitData } from "../models/Habit";
+import { BAD_REQUEST } from "../utils/errors";
 
 export async function checkHabitOwnership(ctx: Koa.Context, next: Koa.Next) {
-  if (!includes(ctx.params.habit, ctx.state.user.habitList)) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
+  if (!includes(ctx.params.habit, ctx.state.user.habitList))
+    ctx.throw(400, BAD_REQUEST);
+
   return next();
 }
 
@@ -33,11 +32,7 @@ export async function extractDateRange(ctx: Koa.Context, next: Koa.Next) {
     ? startOfDay(new Date(payload.end))
     : lastDayOfISOWeek(moment().toDate());
 
-  if (isBefore(end, start)) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
+  if (isBefore(end, start)) ctx.throw(400, BAD_REQUEST);
 
   // store dates for next middleware
   ctx.state.dateStart = start;
@@ -47,11 +42,8 @@ export async function extractDateRange(ctx: Koa.Context, next: Koa.Next) {
 }
 
 export async function validateHabitPayload(ctx: Koa.Context, next: Koa.Next) {
-  if (!validateHabitData(ctx.request.body)) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
+  if (!validateHabitData(ctx.request.body)) ctx.throw(400, BAD_REQUEST);
+
   return next();
 }
 
@@ -103,12 +95,10 @@ export async function getWeeklyHabits(ctx: Koa.Context) {
   ctx.body = data;
 }
 
-
 // Checks the last connection time and builds the dailys in-between
 export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
-
   const today = new Date();
-  
+
   if (!isSameDay(ctx.state.user.lastConnected, today)) {
     const dailys: DailyState[] = [];
     ctx.state.habits.forEach((habit) => {
@@ -118,7 +108,7 @@ export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
     await Daily.insertMany(dailys);
 
     ctx.state.user.lastConnected = today;
-    
+
     await User.findByIdAndUpdate(ctx.state.user._id, {
       lastConnected: ctx.state.user.lastConnected,
     });
