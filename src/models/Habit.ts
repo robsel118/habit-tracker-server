@@ -49,7 +49,9 @@ export const HabitSchema = new mongoose.Schema(
   }
 );
 
-export function validateHabitData(obj: Record<string, any>) {
+export function validateHabitData(
+  obj: Record<string, string | boolean | number[]>
+) {
   const schema = Joi.object({
     name: Joi.string().max(30).required(),
     not: Joi.boolean(),
