@@ -1,43 +1,42 @@
-import Koa from "koa";
 import Router from "koa-router";
-
 import { isAuthenticated } from "../../auth";
-import User from "../../models/User";
-import Habit, { validateHabitData } from "../../models/Habit";
 
-async function addHabitToUser(ctx: Koa.Context) {
-  const user = await User.findById(ctx.state.user);
-
-  if (!validateHabitData(ctx.request.body)) {
-    ctx.body = { message: "Bad Request" };
-    ctx.status = 400;
-    return;
-  }
-  const payload = ctx.request.body;
-
-  const habit = new Habit({ ...payload });
-
-  await habit.save();
-  user.habits.addToSet(habit);
-  await user.save();
-
-  ctx.status = 200;
-  ctx.body = {
-    user,
-    habit,
-  };
-}
-
-async function getUserHabits(ctx: Koa.Context) {
-  const user = await User.findById(ctx.state.user)
-    .select("habits")
-    .populate("habits");
-
-  ctx.status = 200;
-  ctx.body = { habits: user.habits };
-}
+import * as _habit from "../../middlewares/habit";
+import * as _daily from "../../middlewares/daily";
 
 export default (router: Router) => {
-  router.post("/habit", isAuthenticated(), addHabitToUser);
-  router.get("/habit", isAuthenticated(), getUserHabits);
+  router.get(
+    "/habits",
+    isAuthenticated(),
+    _habit.retrieveHabits,
+    _habit.getUserHabits
+  );
+  router.post(
+    "/habits",
+    isAuthenticated(),
+    _habit.validateHabitPayload,
+    _habit.addHabitToUser
+  );
+  router.get(
+    "/habits/weekly",
+    isAuthenticated(),
+    _habit.extractDateRange,
+    _habit.retrieveHabits,
+    _habit.buildMissingDailyList,
+    _daily.retrieveDailyList,
+    _habit.getWeeklyHabits
+  );
+  router.put(
+    "/habits/:habit",
+    isAuthenticated(),
+    _habit.validateHabitPayload,
+    _habit.checkHabitOwnership,
+    _habit.updateHabit
+  );
+  router.put(
+    "/habits/:habit/dailys/:daily",
+    isAuthenticated(),
+    _habit.checkHabitOwnership,
+    _daily.updateDailyHabitState
+  );
 };

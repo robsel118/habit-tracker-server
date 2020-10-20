@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export default (agent) => {
   describe("Auth API", () => {
     it("should not register with invalide email", async () => {
@@ -6,7 +8,7 @@ export default (agent) => {
         .send({ username: "robert", email: "robert", password: "123456" });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
+      expect(response.text).toBe("Bad Request");
     });
 
     it("should register a user", async () => {
@@ -14,8 +16,8 @@ export default (agent) => {
         username: "robert",
         email: "mock-up@tests.com",
         password: "123456",
+        lastConnected: moment("09-19-2020", "MM-DD-YYYY").toDate(),
       });
-
       expect(response.status).toBe(200);
       expect(response.body.token).toBeDefined();
     });
@@ -28,7 +30,7 @@ export default (agent) => {
       });
 
       expect(response.status).toBe(400);
-      expect(response.body.message).toBe("Bad Request");
+      expect(response.text).toBe("Bad Request");
     });
 
     it("should login the user", async () => {

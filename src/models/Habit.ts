@@ -1,6 +1,9 @@
 import mongoose from "mongoose";
 import Joi from "joi";
 import { isNil } from "ramda";
+import { startOfDay, eachDayOfInterval } from "date-fns";
+import { includes } from "ramda";
+import Daily, { DailyState } from "./Daily";
 
 export enum Day {
   "MONDAY",
@@ -15,8 +18,8 @@ export enum Day {
 export interface HabitType extends mongoose.Document {
   name: string;
   not: boolean;
-  frequency: [number];
-  currentStreak: number;
+  frequency: number[];
+  buildDailys: (start: Date, end: Date) => void;
 }
 
 export const HabitSchema = new mongoose.Schema(
@@ -37,10 +40,6 @@ export const HabitSchema = new mongoose.Schema(
         default: undefined,
       },
     ],
-    currentStreak: {
-      type: Number,
-      default: 0,
-    },
   },
   {
     timestamps: {
@@ -50,9 +49,11 @@ export const HabitSchema = new mongoose.Schema(
   }
 );
 
-export function validateHabitData(obj: Record<string, any>) {
+export function validateHabitData(
+  obj: Record<string, string | boolean | number[]>
+) {
   const schema = Joi.object({
-    name: Joi.string().max(20).required(),
+    name: Joi.string().max(30).required(),
     not: Joi.boolean(),
     frequency: Joi.array()
       .items(Joi.number().valid(0, 1, 2, 3, 4, 5, 6))
@@ -64,6 +65,29 @@ export function validateHabitData(obj: Record<string, any>) {
 
   return isNil(error);
 }
+HabitSchema.methods.buildDailys = function (
+  start: Date,
+  end: Date
+): DailyState[] {
+  // eslint-disable-next-line @typescript-eslint/no-this-alias
+  const habit = this;
+  const days = eachDayOfInterval({
+    start: startOfDay(start),
+    end: startOfDay(end),
+  });
+
+  const dailyList = [];
+  days.forEach((day, index) => {
+    const value = includes(index, habit.frequency) ? 0 : 1;
+    const daily = new Daily({
+      habit: habit._id,
+      date: day,
+      value: value,
+    });
+    dailyList.push(daily);
+  });
+  return dailyList;
+};
 
 const Habit = mongoose.model<HabitType>("Habit", HabitSchema);
 export default Habit;

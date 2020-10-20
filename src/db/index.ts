@@ -16,5 +16,6 @@ export default (uri: string) =>
       useNewUrlParser: true,
       useUnifiedTopology: true,
       useCreateIndex: true,
+      useFindAndModify: false,
     });
   });

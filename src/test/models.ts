@@ -1,6 +1,5 @@
 import User, { validateNewUserInfo } from "models/User";
 import Habit, { validateHabitData, Day } from "models/Habit";
-import Completion from "models/Completion";
 
 export default () => {
   describe("testing mongoose model", () => {
@@ -44,34 +43,28 @@ export default () => {
         password: "password",
       });
       const habit = new Habit({ ...payload });
-      testUser.habits.push(habit);
+      testUser.habitList.push(habit);
 
       expect(validateHabitData(payload)).toBe(true);
-      expect(habit.currentStreak).toBe(0);
       expect(habit.name).toBe(payload.name);
       expect(habit.not);
       expect(habit.frequency.length).toBe(1);
-      expect(testUser.habits.length).toBe(1);
-      expect(testUser.habits[0]._id).toBe(habit._id);
+      expect(testUser.habitList.length).toBe(1);
+      expect(testUser.habitList[0]._id).toBe(habit._id);
     });
-
-    it("adds a completion", async () => {
-      const testUser = new User({
-        username: "robert",
-        email: "robert@robert.com",
-        password: "password",
-      });
-      const testHabit = new Habit({
+    it("creates a habit and builds its dailys", async () => {
+      const payload = {
         name: "Eat Junkt",
-        frequency: [Day.MONDAY, Day.WEDNESDAY],
-      });
-      testUser.habits.push(testHabit);
+        frequency: [Day.MONDAY],
+        not: true,
+      };
 
-      const completion = new Completion({ user: testUser });
-      completion.habits.push(testHabit);
-
-      expect(completion.user._id).toBe(testUser._id);
-      expect(completion.habits[0]._id).toBe(testHabit._id);
+      const habit = new Habit({ ...payload });
+      const dailyList = habit.buildDailys(
+        new Date(2020, 8, 21),
+        new Date(2020, 8, 27)
+      );
+      expect(dailyList.length).toBe(7);
     });
   });
 };
