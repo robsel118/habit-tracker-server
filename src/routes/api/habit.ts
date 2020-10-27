@@ -1,6 +1,6 @@
 import Router from "koa-router";
 import { isAuthenticated } from "../../auth";
-
+import { handleErrors } from '../../utils/errors'
 import * as _habit from "../../middlewares/habit";
 import * as _daily from "../../middlewares/daily";
 
@@ -13,7 +13,7 @@ export default (router: Router) => {
   router.post(
     "/habits",
     isAuthenticated(),
-    _habit.addHabitToUser
+    handleErrors(_habit.addHabitToUser)
   );
   router.get(
     "/habits/weekly",
@@ -26,11 +26,11 @@ export default (router: Router) => {
   router.put(
     "/habits/:habit",
     isAuthenticated(),
-    _habit.updateHabit
+    handleErrors(_habit.updateHabit)
   );
   router.put(
     "/habits/:habit/dailys/:daily",
     isAuthenticated(),
-    _daily.updateDailyHabitState
+    handleErrors(_daily.updateDailyHabitState)
   );
 };
