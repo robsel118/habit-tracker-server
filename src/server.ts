@@ -5,15 +5,16 @@ import "./lib/env";
 import auth from "./auth";
 import routes from "./routes";
 
-const app = new Koa();
+const server = new Koa();
+
 
 /** Middlewares */
-app.use(bodyparser());
+server.use(bodyparser());
 
 /** Auth services */
-app.use(auth());
+server.use(auth());
 
 /** Routes */
-app.use(routes());
+server.use(routes());
 
-export default app;
+export default server;

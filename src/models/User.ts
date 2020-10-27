@@ -26,6 +26,7 @@ const UserSchema = new mongoose.Schema(
       type: String,
       required: true,
       unique: true,
+      lowercase: true,
       trim: true,
     },
     hash: {
@@ -66,6 +67,13 @@ export function validateNewUserInfo(obj: Record<string, string>) {
 
   return isNil(error);
 }
+function autopopulate(next: Function) {
+  this.populate("habitList", "name not frequency");
+  next();
+}
+
+UserSchema.pre('find', autopopulate);
+UserSchema.pre('findOne', autopopulate);
 
 const User = mongoose.model<UserType>("User", UserSchema);
 export default User;

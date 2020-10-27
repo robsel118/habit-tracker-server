@@ -32,10 +32,13 @@
     "koa2-swagger-ui": "3.0.0",
     "moment": "2.26.0",
     "mongoose": "^5.9.13",
+    "next": "9.5.5",
     "passport-custom": "^1.1.1",
     "passport-jwt": "^4.0.0",
     "passport-local": "^1.0.0",
-    "ramda": "0.27.0"
+    "ramda": "0.27.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0"
   },
   "devDependencies": {
     "@babel/core": "7.9.6",
@@ -49,6 +52,7 @@
     "@types/koa-router": "^7.4.0",
     "@types/mongoose": "5.7.21",
     "@types/passport": "1.0.3",
+    "@types/react": "16.9.51",
     "@typescript-eslint/eslint-plugin": "2.31.0",
     "@typescript-eslint/parser": "2.31.0",
     "babel-jest": "26.0.1",

@@ -14,12 +14,6 @@ import Daily from "../models/Daily";
 import Habit, { validateHabitData } from "../models/Habit";
 import { BAD_REQUEST } from "../utils/errors";
 
-export async function checkHabitOwnership(ctx: Koa.Context, next: Koa.Next) {
-  if (!includes(ctx.params.habit, ctx.state.user.habitList))
-    ctx.throw(400, BAD_REQUEST);
-
-  return next();
-}
 
 export async function extractDateRange(ctx: Koa.Context, next: Koa.Next) {
   const payload = ctx.request.body;
@@ -41,14 +35,11 @@ export async function extractDateRange(ctx: Koa.Context, next: Koa.Next) {
   return next();
 }
 
-export async function validateHabitPayload(ctx: Koa.Context, next: Koa.Next) {
-  if (!validateHabitData(ctx.request.body)) ctx.throw(400, BAD_REQUEST);
-
-  return next();
-}
 
 export async function addHabitToUser(ctx: Koa.Context) {
   const payload = ctx.request.body;
+
+  ctx.assert(validateHabitData(payload), 400, BAD_REQUEST)
 
   const habit = new Habit({ ...payload });
   await habit.save();
@@ -60,18 +51,12 @@ export async function addHabitToUser(ctx: Koa.Context) {
   ctx.body = habit;
 }
 
-export async function retrieveHabits(ctx: Koa.Context, next: Koa.Next) {
-  const user = await User.findById(ctx.state.user).populate(
-    "habitList",
-    "name not frequency"
-  );
-  ctx.state.habits = user.habitList;
-
-  return next();
-}
-
 export async function updateHabit(ctx: Koa.Context) {
   const payload = ctx.request.body;
+  
+  ctx.assert(includes(ctx.params.habit, ctx.state.user.habitList.map(h => h._id)), 400, BAD_REQUEST)
+  ctx.assert(validateHabitData(payload), 400, BAD_REQUEST)
+
   const habit = await Habit.findByIdAndUpdate(ctx.params.habit, payload, {
     new: true,
   });
@@ -81,7 +66,7 @@ export async function updateHabit(ctx: Koa.Context) {
 }
 
 export async function getWeeklyHabits(ctx: Koa.Context) {
-  const data = ctx.state.habits.reduce((acc, habit) => {
+  const data = ctx.state.user.habitList.reduce((acc, habit) => {
     const habitData = {
       habit,
       dailyList: filter((daily: DailyType) => {
@@ -101,7 +86,8 @@ export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
 
   if (!isSameDay(ctx.state.user.lastConnected, today)) {
     const dailys: DailyState[] = [];
-    ctx.state.habits.forEach((habit) => {
+    console.log(ctx.state.user);
+    ctx.state.user.habitList.forEach((habit) => {
       dailys.push(...habit.buildDailys(ctx.state.user.lastConnected, today));
     });
 
@@ -119,5 +105,5 @@ export async function buildMissingDailyList(ctx: Koa.Context, next: Koa.Next) {
 
 export async function getUserHabits(ctx: Koa.Context) {
   ctx.status = 200;
-  ctx.body = ctx.state.habits;
+  ctx.body = ctx.state.user.habitList;
 }

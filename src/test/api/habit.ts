@@ -19,7 +19,6 @@ export default (agent) => {
         .send({
           name: "workout",
         });
-      console.log(response.text);
       expect(response.status).toBe(400);
       expect(response.text).toBe("Bad Request");
     });

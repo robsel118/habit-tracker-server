@@ -17,11 +17,11 @@ async function registerUser(ctx: Koa.Context, next: Koa.Next) {
     ctx.throw(400, BAD_REQUEST);
 
   //Checks it the user already exists
-  let user = await User.findOne({ email: email.toLowerCase() });
+  let user = await User.findOne({ email: email });
 
   if (user) ctx.throw(400, BAD_REQUEST);
 
-  user = new User({ username, email: email.toLowerCase(), ...other });
+  user = new User({ username, email: email, ...other });
 
   await user.setHash(password);
   await user.save();

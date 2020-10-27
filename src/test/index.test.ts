@@ -1,6 +1,6 @@
 import supertest from "supertest";
 import mongoose from "mongoose";
-import app from "../app";
+import app from "../server";
 import connectDatabase from "../db";
 import modelTest from "./models";
 import authAPITest from "./api/auth";
