@@ -7,14 +7,14 @@ services:
             - .env
         ports: 
             - 3000:3000
-        command: yarn test
+        command: yarn dev
     mongodb:
         image: mongo:latest
         environment:
             - MONGO_DATA_DIR=/data/db
             - MONGO_LOG_DIR=/dev/null
-        # volumes:
-        #     - ./data/db:/data/db
+        volumes:
+            - ./data/db:/data/db
         command: mongod --logpath=/dev/null # --quiet
         ports: 
             - 27017:27017

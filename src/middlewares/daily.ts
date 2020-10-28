@@ -1,6 +1,7 @@
 import Koa from "koa";
 import Daily, { DailyState } from "../models/Daily";
 import { BAD_REQUEST } from "../utils/errors";
+import { includes } from 'ramda';
 
 export async function retrieveDailyList(ctx: Koa.Context, next: Koa.Next) {
   const dailyList = await Daily.find({
@@ -18,12 +19,14 @@ export async function retrieveDailyList(ctx: Koa.Context, next: Koa.Next) {
   return next();
 }
 
-export async function updateDailyHabitState(ctx: Koa.Context, next: Koa.Next) {
+export async function updateDailyHabitState(ctx: Koa.Context) {
   // assuming the habit is already created
   // - [x] update state
   // - [] update Streak
 
   const payload = ctx.request.body;
+
+  ctx.assert(includes(ctx.params.habit, ctx.state.user.habitList.map(h => h._id)), 400, BAD_REQUEST)
 
   if (isNaN(payload.value) || payload.value == DailyState.IMPLICITLY_DONE)
     ctx.throw(400, BAD_REQUEST);

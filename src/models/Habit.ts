@@ -65,6 +65,7 @@ export function validateHabitData(
 
   return isNil(error);
 }
+
 HabitSchema.methods.buildDailys = function (
   start: Date,
   end: Date
