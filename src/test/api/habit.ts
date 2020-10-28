@@ -63,7 +63,6 @@ export default (agent) => {
           name: "workout 1h",
           frequency: [0, 1, 2, 3, 4],
         });
-      // console.log(response);
       expect(response.status).toBe(400);
     });
 
